@@ -1,0 +1,2114 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#080c12">
+<meta name="description" content="Cartera Mari Carmen — registro personal de movimientos de inversión">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Cartera MC">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/svg+xml" href="icon.svg">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<title>Cartera Mari Carmen</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script>window.Chart||document.write('<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"><\/script>')</script>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#080c12;--surface:#0d1420;--surface2:#111b2a;--border:#1d2d42;
+  --accent:#00e5ff;--accent2:#7c4dff;--green:#00e676;--red:#ff1744;
+  --gold:#ffd740;--text:#e8f4fc;--muted:#5a7a99;--card-glow:0 0 30px rgba(0,229,255,0.06);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Syne',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
+html{scroll-behavior:smooth;scrollbar-width:thin;scrollbar-color:#243a55 var(--bg);}
+::-webkit-scrollbar{width:8px;height:8px;}
+::-webkit-scrollbar-track{background:var(--bg);}
+::-webkit-scrollbar-thumb{background:linear-gradient(180deg,#1d2d42,#243a55);border-radius:4px;border:2px solid var(--bg);}
+::selection{background:rgba(0,229,255,.28);color:var(--text);}
+
+/* APP / PWA */
+.logo-img{width:48px;height:48px;min-width:48px;border-radius:12px;display:block;box-shadow:0 0 18px rgba(0,229,255,.18);}
+.pwa-toast{position:fixed;left:50%;bottom:max(18px,env(safe-area-inset-bottom));transform:translateX(-50%);background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:'JetBrains Mono',monospace;font-size:12px;padding:10px 16px;border-radius:10px;z-index:9999;box-shadow:0 8px 30px rgba(0,0,0,.5);max-width:calc(100vw - 32px);text-align:center;}
+@media(max-width:600px){.header h1{font-size:18px;}.logo-img{width:38px;height:38px;min-width:38px;border-radius:10px;}}
+/* HEADER */
+.header{background:linear-gradient(135deg,#080c12 0%,#0a1628 50%,#060e18 100%);border-bottom:1px solid var(--border);padding:22px 40px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100;backdrop-filter:blur(20px);}
+.header-brand{display:flex;align-items:center;gap:14px;}
+.logo-mark{width:48px;height:48px;min-width:48px;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-family:'Syne';font-size:19px;font-weight:800;line-height:1;letter-spacing:0;color:#000;flex-shrink:0;overflow:visible;}
+.header h1{font-size:22px;font-weight:800;letter-spacing:-0.5px;}
+.header h1 span{color:var(--accent);}
+.header-meta{font-family:'JetBrains Mono';font-size:12px;color:var(--muted);}
+.live-badge{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--green);font-family:'JetBrains Mono';}
+.live-dot{width:8px;height:8px;border-radius:50%;background:var(--green);animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.4;}}
+
+/* TABS */
+.tab-content{display:none;padding:32px 40px;}
+.tab-content.active{display:block;}
+
+/* KPI CARDS (main overview) */
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:32px;}
+.kpi-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:18px 16px;box-shadow:var(--card-glow);position:relative;overflow:hidden;transition:transform .25s cubic-bezier(.22,1,.36,1),border-color .25s,box-shadow .25s;text-align:center;}
+.kpi-card:hover{transform:translateY(-3px);border-color:rgba(0,229,255,.3);box-shadow:0 12px 30px -12px rgba(0,229,255,.25),var(--card-glow);}
+.kpi-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--accent),transparent);opacity:0;transition:opacity .3s;}
+.kpi-card:hover::before{opacity:1;}
+.kpi-label{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:7px;}
+.kpi-value{font-family:'JetBrains Mono';font-size:30px;font-weight:700;line-height:1;font-variant-numeric:tabular-nums;letter-spacing:-0.5px;}
+.kpi-value.up{color:var(--green);}
+.kpi-value.down{color:var(--red);}
+.kpi-value.accent{color:var(--accent);}
+.kpi-value.gold{color:var(--gold);}
+.kpi-sub{font-size:9px;color:var(--muted);margin-top:4px;font-family:'JetBrains Mono';}
+
+
+/* MENÚ DESPLEGABLE DE SUBPESTAÑAS */
+.menu-wrap{position:relative;}
+.menu-btn{background:var(--surface2);border:1px solid var(--border);border-radius:11px;color:var(--text);cursor:pointer;font-family:'Syne';font-size:12px;font-weight:700;letter-spacing:.3px;padding:11px 15px;display:flex;align-items:center;gap:9px;transition:all .18s;white-space:nowrap;}
+.menu-btn:hover{border-color:var(--accent);color:var(--accent);}
+.menu-panel{display:none;position:absolute;top:calc(100% + 10px);left:0;min-width:252px;background:var(--surface);border:1px solid var(--border);border-radius:14px;box-shadow:0 18px 44px rgba(0,0,0,.72);padding:8px;z-index:300;}
+.menu-panel.open{display:block;}
+.menu-item{display:flex;align-items:center;gap:10px;width:100%;background:none;border:none;border-radius:9px;color:var(--muted);cursor:pointer;font-family:'Syne';font-size:12.5px;font-weight:600;letter-spacing:.3px;padding:11px 13px;text-align:left;transition:background .15s,color .15s;}
+.menu-item:hover{background:rgba(255,255,255,.05);color:var(--text);}
+.menu-item.active{background:rgba(124,77,255,.14);color:#b388ff;}
+.menu-sep{height:1px;background:var(--border);margin:8px 6px;}
+
+/* CHART CARDS */
+.chart-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:24px;box-shadow:var(--card-glow);}
+.chart-card.full{grid-column:1/-1;}
+.chart-title{font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:20px;display:flex;align-items:center;gap:8px;justify-content:space-between;}
+.chart-title-inner{display:flex;align-items:center;gap:8px;}
+.chart-title-inner::before{content:'';width:4px;height:16px;border-radius:2px;background:var(--accent);flex-shrink:0;}
+canvas{max-height:320px;}
+
+/* SECTION GRIDS */
+.section-grid{display:grid;gap:24px;}
+.grid-2{grid-template-columns:1fr 1fr;}
+.grid-1-2{grid-template-columns:1fr 2fr;}
+
+/* RSUB TABS */
+.rsub-nav{display:flex;gap:0;background:var(--surface);border-bottom:1px solid var(--border);margin:-32px -40px 28px;padding:0 40px;overflow-x:auto;scrollbar-width:none;}
+.rsub-nav::-webkit-scrollbar{display:none;}
+.rsub-tab{background:none;border:none;color:var(--muted);font-family:'Syne';font-size:12px;font-weight:600;letter-spacing:0.5px;padding:0 22px;height:46px;cursor:pointer;border-bottom:2px solid transparent;transition:color .2s,border-color .2s;white-space:nowrap;}
+.rsub-tab:hover{color:var(--text);}
+.rsub-tab.active{color:#7c4dff;border-bottom-color:#7c4dff;}
+.rsub-pane{display:none;}
+.rsub-pane.active{display:block;}
+
+/* ACTIVOS KPI ROW */
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px;}
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px;position:relative;overflow:hidden;transition:border-color .2s;}
+.kpi:hover{border-color:rgba(0,229,255,.25);}
+.kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
+.kpi.k-val::before{background:linear-gradient(90deg,#00e5ff,transparent);}
+.kpi.k-inv::before{background:linear-gradient(90deg,#ffd740,transparent);}
+.kpi.k-gyp::before{background:linear-gradient(90deg,#00e676,transparent);}
+.kpi.k-rent::before{background:linear-gradient(90deg,#7c4dff,transparent);}
+.kpi-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;font-family:'JetBrains Mono';}
+.kpi-val{font-family:'Syne';font-size:24px;font-weight:700;color:var(--text);letter-spacing:-.5px;}
+.kpi-val.pos{color:#00e676;}.kpi-val.neg{color:#ff1744;}
+
+/* FILTER BAR */
+.filter-bar{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:14px;align-items:flex-end;}
+.fg-wrap{display:flex;flex-direction:column;gap:4px;}
+.filter-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;font-family:'JetBrains Mono';}
+.filter-bar input,.filter-bar select{background:var(--surface2);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:8px 12px;font-family:'JetBrains Mono';font-size:12px;outline:none;transition:border-color .2s;}
+.filter-bar input:focus,.filter-bar select:focus{border-color:#7c4dff;}
+.filter-bar input{min-width:200px;}.filter-bar select{min-width:140px;}
+.btn-reset{background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:8px;padding:8px 14px;font-family:'JetBrains Mono';font-size:12px;cursor:pointer;transition:all .2s;}
+.btn-reset:hover{border-color:#00e5ff;color:#00e5ff;}
+
+/* MOV TABLE */
+.mov-table-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:12px;}
+.mov-table-wrap table{width:100%;border-collapse:collapse;min-width:680px;}
+.mov-table-wrap thead{background:var(--surface2);position:sticky;top:0;z-index:5;}
+.mov-table-wrap th{padding:11px 14px;text-align:left;font-family:'Syne';font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;white-space:nowrap;cursor:pointer;user-select:none;border-bottom:1px solid var(--border);transition:color .2s;}
+.mov-table-wrap th:hover{color:#00e5ff;}.mov-table-wrap th.sorted{color:#00e5ff;}
+.mov-table-wrap th .sa{margin-left:3px;font-size:9px;opacity:.4;}
+.mov-table-wrap th.sorted .sa{opacity:1;}
+.mov-table-wrap tbody tr{border-bottom:1px solid var(--border);transition:background .15s;}
+.mov-table-wrap tbody tr:hover{background:rgba(0,229,255,0.03);}
+.mov-table-wrap tbody tr:last-child{border-bottom:none;}
+.mov-table-wrap td{padding:10px 14px;white-space:nowrap;font-family:'JetBrains Mono';font-size:12px;}
+.mov-table-wrap td.pos{color:#00e676;}.mov-table-wrap td.neg{color:#ff1744;}
+.table-info{padding:6px 0;font-size:11px;color:var(--muted);margin-bottom:8px;font-family:'JetBrains Mono';}
+
+/* BADGE */
+.badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;}
+.badge-acc{background:rgba(0,229,255,.12);color:#00e5ff;}
+.badge-etf{background:rgba(124,77,255,.15);color:#7c4dff;}
+.badge-cry{background:rgba(255,215,64,.15);color:#ffd740;}
+.badge-sp5{background:rgba(64,196,255,.15);color:#40c4ff;}
+.badge-oro{background:rgba(255,215,64,.15);color:#ffd740;}
+.badge-msci{background:rgba(0,255,163,.15);color:#00ffa3;}
+.badge-em{background:rgba(255,145,0,.15);color:#ff9100;}
+
+/* MOV HEADER & SUMMARY */
+.mov-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;flex-wrap:wrap;gap:10px;}
+.mov-header h2{font-family:'Syne';font-size:18px;font-weight:700;}
+.btn-add{background:#7c4dff;color:#fff;border:none;border-radius:8px;padding:9px 20px;font-family:'Syne';font-size:13px;font-weight:700;cursor:pointer;transition:background .2s;display:flex;align-items:center;gap:6px;}
+.btn-add:hover{background:#651fff;}
+.mov-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px;}
+.ms{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;}
+.ms-v{font-family:'Syne';font-size:18px;font-weight:700;color:#00e5ff;}
+.ms-l{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-top:3px;font-family:'JetBrains Mono';}
+
+/* ROW BUTTONS */
+.btn-edit{background:transparent;border:1px solid rgba(255,145,0,.5);color:#ff9100;border-radius:5px;padding:0;font-size:13px;cursor:pointer;transition:all .15s;width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;}
+.btn-edit:hover{background:#ff9100;color:#000;}
+.btn-del{background:transparent;border:1px solid rgba(255,23,68,.5);color:#ff1744;border-radius:5px;padding:0;font-size:13px;cursor:pointer;transition:all .15s;width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;}
+.btn-del:hover{background:#ff1744;color:#fff;}
+
+/* MODALS */
+.mov-modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:200;backdrop-filter:blur(6px);align-items:center;justify-content:center;}
+.mov-modal-overlay.open{display:flex;}
+.mov-modal{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:30px;width:480px;max-width:95vw;box-shadow:0 12px 48px rgba(0,0,0,.7);}
+.mov-modal-title{font-family:'Syne';font-size:17px;font-weight:700;margin-bottom:22px;}
+.mov-fg{margin-bottom:14px;}
+.mov-fg label{display:block;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px;font-family:'JetBrains Mono';}
+.mov-fg input,.mov-fg select{width:100%;background:var(--surface2);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:9px 12px;font-family:'JetBrains Mono';font-size:13px;outline:none;transition:border-color .2s;}
+.mov-fg input:focus,.mov-fg select:focus{border-color:#7c4dff;}
+.mov-fg-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.mov-modal-actions{display:flex;gap:10px;margin-top:22px;justify-content:flex-end;}
+.mov-btn-cancel{background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:8px;padding:9px 18px;font-family:'JetBrains Mono';font-size:12px;cursor:pointer;transition:all .2s;}
+.mov-btn-cancel:hover{border-color:#ff1744;color:#ff1744;}
+.mov-btn-save{background:#7c4dff;color:#fff;border:none;border-radius:8px;padding:9px 20px;font-family:'Syne';font-size:13px;font-weight:700;cursor:pointer;transition:background .2s;}
+.mov-btn-save:hover{background:#651fff;}
+.resumen-edit-hint{font-size:11px;color:var(--muted);margin-bottom:14px;padding:10px 12px;background:rgba(124,77,255,.07);border:1px solid rgba(124,77,255,.2);border-radius:8px;font-family:'JetBrains Mono';line-height:1.6;}
+.mov-confirm-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:300;align-items:center;justify-content:center;backdrop-filter:blur(6px);}
+.mov-confirm-overlay.open{display:flex;}
+.mov-confirm-box{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:28px;width:380px;max-width:92vw;box-shadow:0 12px 48px rgba(0,0,0,.7);}
+.mov-confirm-box h3{font-family:'Syne';font-size:16px;font-weight:700;margin-bottom:10px;}
+.mov-confirm-box p{color:var(--muted);font-size:12px;margin-bottom:22px;font-family:'JetBrains Mono';line-height:1.6;}
+.mov-confirm-actions{display:flex;gap:10px;justify-content:flex-end;}
+.empty-state{padding:40px;text-align:center;color:var(--muted);font-size:12px;font-family:'JetBrains Mono';}
+.inline-date-badge{color:var(--text);font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:500;opacity:.85;white-space:nowrap;}
+
+/* VENTAS */
+.vnt-toolbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px;}
+.vnt-yr-btn{background:var(--surface2);border:1px solid var(--border);border-radius:9px;color:var(--muted);cursor:pointer;font-family:'Syne';font-size:11px;font-weight:700;padding:7px 16px;transition:all .2s;}
+.vnt-yr-btn:hover{border-color:var(--accent2);color:var(--accent2);}
+.vnt-yr-btn.active{background:rgba(124,77,255,.15);border-color:rgba(124,77,255,.5);color:var(--accent2);}
+.vnt-search-inp{background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'JetBrains Mono';font-size:12px;padding:8px 12px;outline:none;transition:border-color .2s;width:200px;}
+.vnt-search-inp:focus{border-color:var(--accent2);}
+.vnt-add-btn{background:var(--accent2);border:none;border-radius:8px;color:#fff;cursor:pointer;font-family:'Syne';font-size:12px;font-weight:700;padding:8px 18px;transition:background .2s;}
+.vnt-add-btn:hover{background:#651fff;}
+.vnt-kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:12px;margin-bottom:20px;}
+.vnt-kpi{background:var(--surface);border:1px solid var(--border);border-radius:13px;padding:16px 18px;position:relative;overflow:hidden;transition:border-color .2s;}
+.vnt-kpi:hover{border-color:rgba(124,77,255,.3);}
+.vnt-kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent2),transparent);}
+.vnt-kpi-label{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:7px;}
+.vnt-kpi-value{font-family:'JetBrains Mono';font-size:20px;font-weight:500;line-height:1;font-variant-numeric:tabular-nums;}
+.vnt-kpi-sub{font-size:10px;color:var(--muted);margin-top:4px;font-family:'JetBrains Mono';}
+.vnt-table-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:12px;}
+.vnt-table-wrap table{width:100%;border-collapse:collapse;min-width:860px;}
+.vnt-table-wrap thead{background:var(--surface2);}
+.vnt-table-wrap th{padding:10px 12px;text-align:left;font-family:'Syne';font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;border-bottom:1px solid var(--border);cursor:pointer;transition:color .2s;white-space:nowrap;}
+.vnt-table-wrap th:hover,.vnt-table-wrap th.vnt-sorted{color:var(--accent2);}
+.vnt-table-wrap th.r{text-align:right;}
+.vnt-table-wrap td{padding:9px 12px;font-family:'JetBrains Mono';font-size:11px;border-bottom:1px solid rgba(29,45,66,.4);white-space:nowrap;}
+.vnt-table-wrap td:first-child{font-family:'Syne';font-size:12px;}
+.vnt-table-wrap td.r{text-align:right;}
+.vnt-table-wrap tr:hover td{background:rgba(124,77,255,.03);}
+.vnt-table-wrap tr:last-child td{border-bottom:none;}
+.vnt-pos{color:var(--green);}.vnt-neg{color:var(--red);}
+.vnt-total-row td{font-weight:700;background:rgba(124,77,255,.05);border-top:2px solid var(--border);}
+.vnt-modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:500;backdrop-filter:blur(6px);align-items:center;justify-content:center;}
+.vnt-modal-overlay.open{display:flex;}
+.vnt-modal{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:28px 30px;width:520px;max-width:96vw;box-shadow:0 16px 60px rgba(0,0,0,.7);}
+.vnt-modal-title{font-family:'Syne';font-size:16px;font-weight:800;margin-bottom:20px;color:var(--accent2);}
+
+/* STATS TABLE */
+.stats-table-wrap{overflow-x:auto;}
+.stats-table-wrap table{width:100%;border-collapse:collapse;min-width:700px;}
+
+/* HEATMAP */
+.hm-grid{display:grid;gap:3px;width:100%;}
+.hm-row{display:grid;gap:3px;}
+.hm-year-label{font-family:'JetBrains Mono';font-size:11px;font-weight:700;color:var(--muted);display:flex;align-items:center;min-width:38px;}
+.hm-cell{border-radius:5px;height:36px;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono';font-size:10px;font-weight:600;cursor:default;transition:transform .15s,box-shadow .15s;position:relative;}
+.hm-cell:hover{transform:scale(1.12);box-shadow:0 4px 16px rgba(0,0,0,.4);z-index:10;}
+.hm-cell.empty{background:rgba(29,45,66,0.25);color:rgba(90,122,153,0.4);}
+.hm-header{font-family:'JetBrains Mono';font-size:9px;font-weight:600;color:var(--muted);text-align:center;letter-spacing:.5px;}
+.hm-tooltip{position:fixed;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:8px 12px;font-family:'JetBrains Mono';font-size:11px;color:var(--text);pointer-events:none;z-index:2000;box-shadow:0 8px 24px rgba(0,0,0,.5);display:none;}
+.auto-badge{display:inline-flex;align-items:center;gap:5px;background:rgba(0,229,255,0.1);border:1px solid rgba(0,229,255,0.3);border-radius:6px;padding:2px 8px;font-family:'JetBrains Mono';font-size:9px;color:var(--accent);font-weight:600;letter-spacing:.5px;}
+
+/* ANIMATIONS */
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
+.kpi-card,.chart-card{animation:fadeIn 0.4s ease both;}
+
+/* MEDIA */
+@media(max-width:900px){
+  .tab-content{padding:20px 16px;}
+  .header{padding:16px 20px;}
+  .rsub-nav{margin:-20px -16px 20px;padding:0 16px;}
+  .grid-2,.grid-1-2{grid-template-columns:1fr;}
+  .kpi-grid{grid-template-columns:1fr 1fr;}
+  .kpi-row{grid-template-columns:1fr 1fr;}
+  .mov-summary{grid-template-columns:1fr 1fr;}
+}
+
+/* Focus accessibility */
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px;}
+button:focus-visible{outline:none;box-shadow:0 0 0 2px var(--bg),0 0 0 4px var(--accent);}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important;}}
+.header{padding-top:max(22px,env(safe-area-inset-top));}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-brand">
+    <div class="menu-wrap">
+      <button class="menu-btn" id="menu-btn" title="Menú" onclick="toggleMenu(event)" style="padding:11px 13px"><span style="font-size:16px;line-height:1">☰</span></button>
+      <div class="menu-panel" id="menu-panel">
+        <button class="menu-item active" data-pane="general" onclick="menuGo('general')">📊 Vista General</button>
+        <button class="menu-item" data-pane="activos" onclick="menuGo('activos')">📋 Resumen de Activos</button>
+        <button class="menu-item" data-pane="movimientos" onclick="menuGo('movimientos')">🛒 Compras</button>
+        <button class="menu-item" data-pane="ventas" onclick="menuGo('ventas')">📤 Ventas</button>
+        <div class="menu-sep"></div>
+        <button class="menu-item" onclick="openBackupModal()">💾 Guardado · importar / exportar</button>
+        <button class="menu-item" id="install-btn" onclick="installApp()" style="display:none">📲 Instalar app</button>
+      </div>
+    </div>
+    <img class="logo-img" src="icon.svg" alt="Cartera Mari Carmen" width="48" height="48">
+    <div>
+      <h1>Cartera <span>Mari Carmen</span></h1>
+    </div>
+  </div>
+  <div style="display:flex;align-items:center;gap:14px">
+    <button onclick="toggleFullscreen()" id="fs-btn" title="Pantalla completa" style="background:transparent;border:1px solid rgba(0,229,255,0.35);border-radius:9px;color:var(--accent);cursor:pointer;font-size:15px;line-height:1;width:36px;height:36px;display:flex;align-items:center;justify-content:center;transition:all .18s" onmouseover="this.style.background='rgba(0,229,255,0.1)'" onmouseout="this.style.background='transparent'"><span id="fs-icon">⛶</span></button>
+    <div class="live-badge">
+      <div class="live-dot"></div>
+      <span id="fecha-hoy">—</span>
+    </div>
+  </div>
+</header>
+
+<!-- ════════════════════════════════════════
+     RESUMEN
+════════════════════════════════════════ -->
+<div class="tab-content active" id="overview">
+
+  <!-- ── VISTA GENERAL ── -->
+  <div class="rsub-pane active" id="rsub-general">
+    <!-- 4 KPIs (sin dividendos) -->
+    <div class="kpi-grid" id="ovw-kpi-grid">
+      <div class="kpi-card" style="border-color:rgba(0,229,255,0.3);background:linear-gradient(145deg,rgba(0,229,255,0.07),rgba(0,229,255,0.01))"><div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),transparent)"></div><div class="kpi-label" style="color:#00e5ff">Valor Cartera Actual</div><div class="kpi-value accent" id="ovw-total-valor">—</div></div>
+      <div class="kpi-card" style="border-color:rgba(255,255,255,0.22);background:linear-gradient(145deg,rgba(255,255,255,0.06),rgba(255,255,255,0.01))"><div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--text),transparent)"></div><div class="kpi-label" style="color:var(--text)">Total Invertido</div><div class="kpi-value" id="ovw-total-inv">—</div></div>
+      <div class="kpi-card" style="border-color:rgba(0,230,118,0.3);background:linear-gradient(145deg,rgba(0,230,118,0.07),rgba(0,230,118,0.01))"><div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--green),transparent)"></div><div class="kpi-label" style="color:#00e676">Ganancia / Pérdida</div><div class="kpi-value" id="ovw-gyp">—</div></div>
+      <div class="kpi-card" style="border-color:rgba(124,77,255,0.3);background:linear-gradient(145deg,rgba(124,77,255,0.07),rgba(124,77,255,0.01))"><div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent2),transparent)"></div><div class="kpi-label" style="color:#7c4dff">Rentabilidad Total</div><div class="kpi-value" id="ovw-rent">—</div></div>
+    </div>
+
+    <div class="section-grid grid-1-2" style="margin-bottom:24px">
+      <!-- DONUT DISTRIBUCIÓN POR ACTIVOS -->
+      <div class="chart-card" style="display:flex;flex-direction:column">
+        <div class="chart-title">
+          <span class="chart-title-inner">Distribución por Activos</span>
+          <span style="display:inline-flex;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:2px;gap:2px">
+            <button id="act-tab-valor" onclick="setActivosModo('valor')" style="background:rgba(0,229,255,0.15);border:none;border-radius:6px;color:var(--accent);cursor:pointer;font-family:'Syne';font-size:9px;font-weight:700;letter-spacing:.4px;padding:4px 9px">Valor actual</button>
+            <button id="act-tab-inv" onclick="setActivosModo('inversion')" style="background:transparent;border:none;border-radius:6px;color:var(--muted);cursor:pointer;font-family:'Syne';font-size:9px;font-weight:700;letter-spacing:.4px;padding:4px 9px">Inversión</button>
+          </span>
+        </div>
+        <div style="flex:1;display:flex;align-items:center;justify-content:center;padding:8px 0">
+          <div style="position:relative;width:100%;max-width:240px;min-height:190px">
+            <canvas id="activosDonutChart"></canvas>
+          </div>
+        </div>
+        <div id="activos-legend" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:12px;justify-content:center"></div>
+      </div>
+
+      <!-- EVOLUCIÓN CARTERA -->
+      <div class="chart-card" style="display:flex;flex-direction:column">
+        <div class="chart-title">
+          <span class="chart-title-inner" style="--accent:#00e5ff">Evolución de la Cartera — Acumulado &amp; Variación Mensual</span>
+          <button onclick="toggleEvoEditor()" id="evo-edit-btn" style="background:transparent;border:1px solid rgba(0,229,255,0.3);border-radius:7px;color:var(--accent);cursor:pointer;font-family:'Syne';font-size:10px;font-weight:600;padding:4px 10px;transition:all .18s;letter-spacing:.5px" onmouseover="this.style.background='rgba(0,229,255,0.1)'" onmouseout="this.style.background='transparent'">✏ Editar datos</button>
+        </div>
+        <div style="flex:1;position:relative;min-height:160px">
+          <canvas id="evolucionDualChart"></canvas>
+        </div>
+        <!-- EDITOR EVO -->
+        <div id="evo-editor" style="display:none;margin-top:20px;border-top:1px solid var(--border);padding-top:18px">
+          <div style="font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted);margin-bottom:12px;display:flex;justify-content:space-between;align-items:center">
+            <span>📊 Datos de evolución mensual</span>
+            <button onclick="addEvoRow()" style="background:rgba(0,229,255,0.1);border:1px solid rgba(0,229,255,0.4);border-radius:7px;color:var(--accent);cursor:pointer;font-family:'Syne';font-size:10px;font-weight:700;padding:5px 12px">＋ Añadir mes</button>
+          </div>
+          <div style="overflow-x:auto;border:1px solid var(--border);border-radius:10px">
+            <table style="width:100%;border-collapse:collapse;font-size:12px;min-width:420px">
+              <thead><tr style="background:var(--surface2)">
+                <th style="padding:9px 14px;text-align:left;font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border)">Mes / Periodo</th>
+                <th style="padding:9px 14px;text-align:right;font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--accent);border-bottom:1px solid var(--border)">Rent. acumulada % <span style="opacity:.6">(auto)</span></th>
+                <th style="padding:9px 14px;text-align:right;font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border)">Variación mensual %</th>
+                <th style="padding:9px 14px;border-bottom:1px solid var(--border);width:36px"></th>
+              </tr></thead>
+              <tbody id="evo-table-body"></tbody>
+            </table>
+          </div>
+          <div style="display:flex;justify-content:flex-end;margin-top:12px">
+            <button onclick="applyEvoData()" style="background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;border-radius:8px;color:#000;cursor:pointer;font-family:'Syne';font-size:12px;font-weight:700;padding:9px 22px">💾 Actualizar gráfico</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- HEATMAP RENDIMIENTO MENSUAL -->
+    <div class="chart-card" style="margin-top:0;margin-bottom:28px">
+      <div class="chart-title">
+        <span class="chart-title-inner">Rendimiento Mensual Cartera Mari Carmen (%)</span>
+        <span class="auto-badge" id="hm-auto-badge">⚡ Auto</span>
+      </div>
+      <div id="hm-tooltip" class="hm-tooltip"></div>
+      <div id="heatmapWrap" style="overflow-x:auto;margin-top:4px"></div>
+    </div>
+
+    <!-- KPIs -->
+    <div class="kpi-grid" style="grid-template-columns:repeat(auto-fit,minmax(240px,1fr));margin-top:8px">
+      <div class="kpi-card" style="border-color:rgba(0,229,255,0.3);background:linear-gradient(145deg,rgba(0,229,255,0.07),rgba(0,229,255,0.01))"><div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),transparent)"></div><div class="kpi-label" style="color:#00e5ff">● Cartera MC</div><div class="kpi-value accent" id="cmp-kpi-mc">—</div><div class="kpi-sub" id="cmp-kpi-mc-sub">Sin datos</div></div>
+      <div class="kpi-card" style="border-color:rgba(0,230,118,0.3);background:linear-gradient(145deg,rgba(0,230,118,0.07),rgba(0,230,118,0.01))"><div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--green),transparent)"></div><div class="kpi-label" style="color:#00e676">● MSCI ACWI</div><div class="kpi-value" style="color:#00e676" id="cmp-kpi-bm">—</div><div class="kpi-sub" id="cmp-kpi-bm-sub">Sin datos</div></div>
+      <div class="kpi-card" style="border-color:rgba(255,215,64,0.3);background:linear-gradient(145deg,rgba(255,215,64,0.07),rgba(255,215,64,0.01))"><div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--gold),transparent)"></div><div class="kpi-label" style="color:#ffd740">Diferencia</div><div class="kpi-value gold" id="cmp-kpi-diff">—</div><div class="kpi-sub" id="cmp-kpi-diff-sub">Cartera MC vs benchmark</div></div>
+    </div>
+
+    <!-- STRIP COMPARATIVA VS BENCHMARK -->
+    <div class="chart-card" id="cmp-bench-strip" style="margin-bottom:24px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;justify-content:space-between;padding:16px 20px">
+      <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+        <span style="font-family:'Syne';font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted)">📊 Cartera MC vs Benchmark (mes actual)</span>
+        <span id="cmp-strip-pill" style="display:inline-flex;align-items:center;gap:8px;border-radius:999px;padding:7px 18px;font-family:'JetBrains Mono';font-size:12px;font-weight:500;border:1px solid rgba(0,230,118,0.45);background:rgba(0,230,118,0.10);color:#00e676">🌍 MSCI ACWI — sin datos</span>
+      </div>
+      <span id="cmp-strip-right" style="font-family:'JetBrains Mono';font-size:12px;color:var(--muted)">Cartera MC: —</span>
+    </div>
+
+    <!-- GRÁFICO COMPARATIVO -->
+    <div class="chart-card" style="margin-bottom:24px">
+      <div class="chart-title">
+        <span class="chart-title-inner" style="--accent:#00e5ff">Evolución Comparativa — Cartera MC vs MSCI ACWI</span>
+        <button onclick="toggleCompEditor()" id="cmp-edit-btn" style="background:transparent;border:1px solid rgba(0,229,255,0.3);border-radius:7px;color:var(--accent);cursor:pointer;font-family:'Syne';font-size:10px;font-weight:600;padding:4px 10px;transition:all .18s;letter-spacing:.5px" onmouseover="this.style.background='rgba(0,229,255,0.1)'" onmouseout="this.style.background='transparent'">✏ Editar datos</button>
+      </div>
+      <div style="position:relative;height:380px;min-height:280px">
+        <canvas id="comparativaChart"></canvas>
+      </div>
+      <div id="cmp-empty" style="display:none;text-align:center;color:var(--muted);font-family:'JetBrains Mono';font-size:11px;padding:18px 0">Pulsa «✏ Editar datos» y añade tus meses para dibujar la comparativa</div>
+
+      <!-- EDITOR COMPARATIVA -->
+      <div id="cmp-editor" style="display:none;margin-top:20px;border-top:1px solid var(--border);padding-top:18px">
+        <div style="font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted);margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+          <span>📊 Rentabilidades acumuladas (%) · Cartera MC se rellena sola desde la evolución de la cartera; edita solo el MSCI ACWI</span>
+          <span style="display:flex;gap:8px">
+            <button onclick="addCompRow()" style="background:rgba(0,229,255,0.1);border:1px solid rgba(0,229,255,0.4);border-radius:7px;color:var(--accent);cursor:pointer;font-family:'Syne';font-size:10px;font-weight:700;padding:5px 12px">＋ Añadir periodo</button>
+          </span>
+        </div>
+        <div style="overflow-x:auto;border:1px solid var(--border);border-radius:10px;max-height:420px;overflow-y:auto">
+          <table style="width:100%;border-collapse:collapse;font-size:12px;min-width:440px">
+            <thead><tr style="background:var(--surface2);position:sticky;top:0;z-index:3">
+              <th style="padding:9px 14px;text-align:left;font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border)">Mes</th>
+              <th style="padding:9px 14px;text-align:right;font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--accent);border-bottom:1px solid var(--border)">Cartera MC % <span style="opacity:.6">(auto)</span></th>
+              <th style="padding:9px 14px;text-align:right;font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:#00e676;border-bottom:1px solid var(--border)">MSCI ACWI %</th>
+              <th style="padding:9px 14px;border-bottom:1px solid var(--border);width:36px"></th>
+            </tr></thead>
+            <tbody id="cmp-table-body"></tbody>
+          </table>
+        </div>
+        <div style="display:flex;justify-content:flex-end;margin-top:12px">
+          <button onclick="applyCompData()" style="background:linear-gradient(135deg,var(--accent),#00e676);border:none;border-radius:8px;color:#000;cursor:pointer;font-family:'Syne';font-size:12px;font-weight:700;padding:9px 22px">💾 Actualizar gráfico</button>
+        </div>
+      </div>
+    </div>
+    <!-- ESTADÍSTICAS POR PERÍODO -->
+    <div class="chart-card" style="margin-bottom:24px">
+      <div class="chart-title">
+        <span class="chart-title-inner">Estadísticas por Período</span>
+      </div>
+      <div style="font-size:10px;color:var(--muted);margin-bottom:16px;font-family:'JetBrains Mono'">Calculado desde las variaciones mensuales del mapa de calor · Rent. Total compuesta · CAGR solo con 12+ meses</div>
+      <div class="stats-table-wrap">
+        <table id="met-stats-table" style="width:100%;border-collapse:collapse;min-width:700px">
+          <thead>
+            <tr style="border-bottom:2px solid var(--border)">
+              <th style="text-align:left;padding:9px 14px;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted)">Período</th>
+              <th style="text-align:right;padding:9px 10px;font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--accent)">Rent. Total</th>
+              <th style="text-align:right;padding:9px 10px;font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--muted)">Media Mes</th>
+              <th style="text-align:right;padding:9px 10px;font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--gold)">Vol. Anual</th>
+              <th style="text-align:right;padding:9px 10px;font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:#b388ff">Sharpe</th>
+              <th style="text-align:right;padding:9px 10px;font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--green)">Mejor Mes</th>
+              <th style="text-align:right;padding:9px 10px;font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--red)">Peor Mes</th>
+              <th style="text-align:right;padding:9px 10px;font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--red)">Max DD</th>
+              <th style="text-align:right;padding:9px 10px;font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--muted)">Meses +</th>
+              <th style="text-align:right;padding:9px 10px;font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:#69f0ae">CAGR Est.</th>
+            </tr>
+          </thead>
+          <tbody id="met-stats-tbody">
+            <tr><td colspan="10" style="text-align:center;color:var(--muted);padding:24px;font-family:'JetBrains Mono';font-size:11px">Añade datos de evolución para ver las estadísticas</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div><!-- /rsub-general -->
+
+
+  <!-- ── RESUMEN DE ACTIVOS ── -->
+  <div class="rsub-pane" id="rsub-activos">
+    <div class="kpi-row" id="kpi-row"></div>
+    <div class="filter-bar">
+      <div class="fg-wrap"><span class="filter-label">Buscar</span>
+        <input type="text" id="r-search" placeholder="Nombre del activo..." oninput="renderResumen()"></div>
+      <div class="fg-wrap"><span class="filter-label">Tipo</span>
+        <select id="r-tipo" onchange="renderResumen()">
+          <option value="">Todos</option><option value="SP500">S&P 500</option>
+          <option value="Oro">Oro</option>
+          <option value="MSCI World">MSCI World</option>
+          <option value="Emerging Markets">Emerging Markets</option>
+        </select></div>
+      <div class="fg-wrap"><span class="filter-label">Resultado</span>
+        <select id="r-rentab" onchange="renderResumen()">
+          <option value="">Todos</option><option value="pos">En positivo ▲</option><option value="neg">En negativo ▼</option>
+        </select></div>
+      <button class="btn-reset" onclick="resetResumenFilters()">↺ Limpiar</button>
+    </div>
+    <div class="table-info" id="r-info"></div>
+    <div class="mov-table-wrap">
+      <table id="r-table">
+        <thead><tr>
+          <th onclick="sortR('empresa')">Activo<span class="sa">↕</span></th>
+          <th onclick="sortR('tipo')">Tipo<span class="sa">↕</span></th>
+          <th onclick="sortR('cotizacion')">Cotización<span class="sa">↕</span></th>
+          <th onclick="sortR('num_acciones')">Participaciones<span class="sa">↕</span></th>
+          <th onclick="sortR('precio_medio')">Precio Medio<span class="sa">↕</span></th>
+          <th onclick="sortR('inversion_total')">Inversión Total<span class="sa">↕</span></th>
+          <th onclick="sortR('valor_actual')">Valor Actual<span class="sa">↕</span></th>
+          <th onclick="sortR('gyp')">G&amp;P<span class="sa">↕</span></th>
+          <th onclick="sortR('rent')">Rentabilidad<span class="sa">↕</span></th>
+          <th>Acciones</th>
+        </tr></thead>
+        <tbody id="r-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ── COMPRAS ── -->
+  <div class="rsub-pane" id="rsub-movimientos">
+    <div class="mov-header">
+      <h2>Registro de Compras</h2>
+      <button class="btn-add" onclick="openAddModal()">＋ Añadir Compra</button>
+    </div>
+    <div class="mov-summary" id="mov-summary"></div>
+    <div class="filter-bar">
+      <div class="fg-wrap"><span class="filter-label">Buscar Acción</span>
+        <input type="text" id="m-search" placeholder="Buscar por nombre..." oninput="renderMovimientos()"></div>
+      <div class="fg-wrap"><span class="filter-label">Activo</span>
+        <select id="m-activo" onchange="renderMovimientos()">
+          <option value="">Todos</option>
+        </select></div>
+      <div class="fg-wrap"><span class="filter-label">Año</span>
+        <select id="m-year" onchange="renderMovimientos()"><option value="">Todos los años</option></select></div>
+      <div class="fg-wrap"><span class="filter-label">Mes</span>
+        <select id="m-month" onchange="renderMovimientos()">
+          <option value="">Todos los meses</option>
+          <option value="01">Enero</option><option value="02">Febrero</option><option value="03">Marzo</option>
+          <option value="04">Abril</option><option value="05">Mayo</option><option value="06">Junio</option>
+          <option value="07">Julio</option><option value="08">Agosto</option><option value="09">Septiembre</option>
+          <option value="10">Octubre</option><option value="11">Noviembre</option><option value="12">Diciembre</option>
+        </select></div>
+      <button class="btn-reset" onclick="resetMovFilters()">↺ Limpiar</button>
+    </div>
+    <div class="table-info" id="m-info"></div>
+    <div class="mov-table-wrap">
+      <table id="m-table">
+        <thead><tr>
+          <th onclick="sortM('accion')">Activo<span class="sa">↕</span></th>
+          <th onclick="sortM('tipo')">Tipo<span class="sa">↕</span></th>
+          <th onclick="sortM('fecha')">Fecha de Compra<span class="sa">↕</span></th>
+          <th onclick="sortM('participaciones')">Participaciones<span class="sa">↕</span></th>
+          <th onclick="sortM('valor_liquidativo')">Precio / VL<span class="sa">↕</span></th>
+          <th onclick="sortM('_total')">Total Invertido<span class="sa">↕</span></th>
+          <th>Acciones</th>
+        </tr></thead>
+        <tbody id="m-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ── VENTAS ── -->
+  <div class="rsub-pane" id="rsub-ventas">
+    <div class="vnt-toolbar">
+      <div style="display:flex;gap:6px;align-items:center">
+        <button class="vnt-yr-btn active" data-yr="2025" onclick="ventasSwitchYear(2025,this)">📅 2025</button>
+        <button class="vnt-yr-btn" data-yr="2026" onclick="ventasSwitchYear(2026,this)">📅 2026</button>
+        <button class="vnt-yr-btn" data-yr="0" onclick="ventasSwitchYear(0,this)">🗂 Todos</button>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <input id="vnt-search" class="vnt-search-inp" placeholder="🔍 Buscar activo..." oninput="ventasRender()">
+        <button class="vnt-add-btn" onclick="ventasOpenModal(null)">＋ Nueva Venta</button>
+      </div>
+    </div>
+    <div class="vnt-kpi-grid" id="vnt-kpi-grid"></div>
+    <div class="vnt-table-wrap">
+      <table id="vnt-table">
+        <thead><tr>
+          <th onclick="ventasSort('activo')">Activo <span class="sa">↕</span></th>
+          <th onclick="ventasSort('fechaAdq')">F. Compra <span class="sa">↕</span></th>
+          <th onclick="ventasSort('fechaVta')">F. Venta <span class="sa">↕</span></th>
+          <th class="r" onclick="ventasSort('vAdq')">V. Adq. <span class="sa">↕</span></th>
+          <th class="r" onclick="ventasSort('vVta')">V. Venta <span class="sa">↕</span></th>
+          <th class="r" onclick="ventasSort('comis')">Comis. <span class="sa">↕</span></th>
+          <th class="r" onclick="ventasSort('profit')">Profit Bruto <span class="sa">↕</span></th>
+          <th class="r" onclick="ventasSort('profitNet')">Profit Neto <span class="sa">↕</span></th>
+          <th style="text-align:center">Acciones</th>
+        </tr></thead>
+        <tbody id="vnt-tbody"></tbody>
+      </table>
+    </div>
+    <div class="table-info" id="vnt-info" style="margin-top:8px"></div>
+  </div>
+
+</div><!-- /overview -->
+
+
+<!-- ════ MODAL: AÑADIR/EDITAR COMPRA ════ -->
+
+<!-- MODAL GUARDADO -->
+<div class="mov-modal-overlay" id="backup-modal" onclick="if(event.target===this)closeBackupModal()">
+  <div class="mov-modal" style="width:620px">
+    <div class="mov-modal-title">💾 Guardado · importar y exportar</div>
+    <div style="display:flex;gap:8px;margin-bottom:14px">
+      <button id="bk-tab-json" onclick="setBackupFormato('json')" style="flex:1;background:rgba(0,229,255,.15);border:1px solid rgba(0,229,255,.4);border-radius:8px;color:var(--accent);cursor:pointer;font-family:'Syne';font-size:11px;font-weight:700;padding:8px">JSON</button>
+      <button id="bk-tab-texto" onclick="setBackupFormato('texto')" style="flex:1;background:transparent;border:1px solid var(--border);border-radius:8px;color:var(--muted);cursor:pointer;font-family:'Syne';font-size:11px;font-weight:700;padding:8px">Texto</button>
+    </div>
+    <div class="mov-fg">
+      <label id="bk-label">Copia este contenido para guardarlo, o pega uno anterior para restaurarlo</label>
+      <textarea id="bk-area" spellcheck="false" style="width:100%;height:230px;background:var(--surface2);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:10px 12px;font-family:'JetBrains Mono';font-size:11px;outline:none;resize:vertical;line-height:1.5"></textarea>
+    </div>
+    <div id="bk-msg" style="font-family:'JetBrains Mono';font-size:11px;color:var(--muted);min-height:16px;margin-bottom:6px"></div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:space-between;align-items:center">
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button onclick="copyBackup()" style="background:transparent;border:1px solid rgba(0,229,255,.4);border-radius:8px;color:var(--accent);cursor:pointer;font-family:'Syne';font-size:11px;font-weight:700;padding:8px 14px">📋 Copiar</button>
+        <button onclick="downloadBackup()" style="background:transparent;border:1px solid rgba(0,229,255,.4);border-radius:8px;color:var(--accent);cursor:pointer;font-family:'Syne';font-size:11px;font-weight:700;padding:8px 14px">⬇ Descargar</button>
+        <button onclick="document.getElementById('bk-file').click()" style="background:transparent;border:1px solid var(--border);border-radius:8px;color:var(--muted);cursor:pointer;font-family:'Syne';font-size:11px;font-weight:700;padding:8px 14px">📂 Abrir archivo</button>
+        <input type="file" id="bk-file" accept=".json,.txt" style="display:none" onchange="loadBackupFile(this)">
+      </div>
+      <div style="display:flex;gap:8px">
+        <button class="mov-btn-cancel" onclick="closeBackupModal()">Cerrar</button>
+        <button onclick="importBackup()" style="background:linear-gradient(135deg,var(--accent),#00e676);border:none;border-radius:8px;color:#000;cursor:pointer;font-family:'Syne';font-size:12px;font-weight:700;padding:9px 20px">⬆ Importar datos</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="mov-modal-overlay" id="mov-modal" onclick="if(event.target===this)closeModal()">
+  <div class="mov-modal">
+    <div class="mov-modal-title" id="modal-title">Añadir Movimiento</div>
+    <div class="mov-fg"><label>Activo *</label><input id="f-accion" type="text" placeholder="Ej: SP500, Oro, MSCI World, Emerging Markets…"></div>
+    <div class="mov-fg-row">
+      <div class="mov-fg"><label>Tipo</label>
+        <select id="f-tipo" onchange="autoFillActivo()"><option value="SP500">S&P 500</option><option value="Oro">Oro</option><option value="MSCI World">MSCI World</option><option value="Emerging Markets">Emerging Markets</option></select></div>
+      <div class="mov-fg"><label>Fecha *</label><input id="f-fecha" type="date"></div>
+    </div>
+    <div class="mov-fg-row">
+      <div class="mov-fg"><label>Participaciones *</label><input id="f-participaciones" type="number" step="any" placeholder="0"></div>
+      <div class="mov-fg"><label>Precio / VL *</label><input id="f-precio" type="number" step="any" placeholder="0.00"></div>
+    </div>
+    <div class="mov-modal-actions">
+      <button class="mov-btn-cancel" onclick="closeModal()">Cancelar</button>
+      <button class="mov-btn-save" onclick="saveMovimiento()">💾 Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════ MODAL: EDITAR ACTIVO (cotización) ════ -->
+<div class="mov-modal-overlay" id="resumen-modal" onclick="if(event.target===this)document.getElementById('resumen-modal').classList.remove('open')">
+  <div class="mov-modal">
+    <div class="mov-modal-title">Editar Cotización Actual</div>
+    <p class="resumen-edit-hint">Actualiza la cotización de <strong id="resumen-edit-empresa">—</strong> para recalcular el valor actual y la rentabilidad.</p>
+    <div class="mov-fg"><label>Nombre</label><input id="resumen-edit-nombre" type="text" placeholder="Nombre del activo"></div>
+    <div class="mov-fg-row">
+      <div class="mov-fg"><label>Cotización actual</label><input id="resumen-edit-cotizacion" type="number" step="any" placeholder="0.00"></div>
+      <div class="mov-fg"><label>Tipo</label>
+        <select id="resumen-edit-tipo"><option value="SP500">S&P 500</option><option value="Oro">Oro</option><option value="MSCI World">MSCI World</option><option value="Emerging Markets">Emerging Markets</option></select></div>
+    </div>
+    <div class="mov-modal-actions">
+      <button class="mov-btn-cancel" onclick="document.getElementById('resumen-modal').classList.remove('open')">Cancelar</button>
+      <button class="mov-btn-save" onclick="saveResumenEdit()">💾 Aplicar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════ MODAL: CONFIRMAR BORRAR COMPRA ════ -->
+<div class="mov-confirm-overlay" id="confirm-modal" onclick="if(event.target===this)closeConfirm()">
+  <div class="mov-confirm-box">
+    <h3>⚠ Confirmar eliminación</h3>
+    <p>Esta acción eliminará el movimiento seleccionado. ¿Confirmas?</p>
+    <div class="mov-confirm-actions">
+      <button class="mov-btn-cancel" onclick="closeConfirm()">Cancelar</button>
+      <button style="background:#ff1744;color:#fff;border:none;border-radius:8px;padding:9px 20px;font-family:'Syne';font-size:13px;font-weight:700;cursor:pointer" onclick="doDelete()">Sí, eliminar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════ MODAL: CONFIRMAR BORRAR ACTIVO ════ -->
+<div class="mov-confirm-overlay" id="confirm-asset-modal" onclick="if(event.target===this)document.getElementById('confirm-asset-modal').classList.remove('open')">
+  <div class="mov-confirm-box">
+    <h3>⚠ Eliminar todas las compras</h3>
+    <p id="confirm-asset-text">¿Eliminar todas las compras de este activo?</p>
+    <div class="mov-confirm-actions">
+      <button class="mov-btn-cancel" onclick="document.getElementById('confirm-asset-modal').classList.remove('open')">Cancelar</button>
+      <button style="background:#ff1744;color:#fff;border:none;border-radius:8px;padding:9px 20px;font-family:'Syne';font-size:13px;font-weight:700;cursor:pointer" onclick="doDeleteAsset()">Sí, eliminar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════ MODAL: VENTAS ════ -->
+<div class="vnt-modal-overlay" id="vnt-modal-overlay" onclick="if(event.target===this)ventasCloseModal()">
+  <div class="vnt-modal">
+    <div class="vnt-modal-title" id="vnt-modal-title">Nueva Venta</div>
+    <div class="mov-fg-row">
+      <div class="mov-fg"><label>Activo / Nombre</label><input id="vnt-f-activo" type="text" placeholder="Ej: SANTANDER"></div>
+      <div class="mov-fg"><label>Año fiscal</label><select id="vnt-f-year"><option value="2025">2025</option><option value="2026">2026</option></select></div>
+    </div>
+    <div class="mov-fg-row">
+      <div class="mov-fg"><label>Fecha Adquisición</label><input id="vnt-f-fadq" type="date"></div>
+      <div class="mov-fg"><label>Fecha Venta</label><input id="vnt-f-fvta" type="date"></div>
+    </div>
+    <div class="mov-fg-row">
+      <div class="mov-fg"><label>V. Adquisición (€)</label><input id="vnt-f-vadq" type="number" step="0.01" placeholder="0.00" oninput="ventasRecalc()"></div>
+      <div class="mov-fg"><label>V. Transmisión (€)</label><input id="vnt-f-vvta" type="number" step="0.01" placeholder="0.00" oninput="ventasRecalc()"></div>
+    </div>
+    <div class="mov-fg-row">
+      <div class="mov-fg"><label>Comisiones (€)</label><input id="vnt-f-comis" type="number" step="0.01" placeholder="0.00" oninput="ventasRecalc()"></div>
+      <div class="mov-fg"><label>Profit Neto (auto)</label>
+        <div id="vnt-f-preview" style="font-family:'JetBrains Mono';font-size:16px;font-weight:700;padding:9px 12px;border-radius:8px;background:var(--surface2);border:1px solid var(--border);color:var(--muted)">—</div>
+      </div>
+    </div>
+    <div class="mov-modal-actions">
+      <button class="mov-btn-cancel" onclick="ventasCloseModal()">Cancelar</button>
+      <button class="mov-btn-save" onclick="ventasSaveModal()">💾 Guardar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════
+// STORAGE PREFIX (diferente del dashboard original)
+// ══════════════════════════════════════════════
+const S = k => 'portfolio_lite_' + k;
+const C = id => document.getElementById(id);
+const save = (k, v) => { try { localStorage.setItem(S(k), JSON.stringify(v)); } catch(e) {} };
+const load = (k, def) => { try { const r = localStorage.getItem(S(k)); return r ? JSON.parse(r) : def; } catch(e) { return def; } };
+
+// ══ FECHA HOY ══
+(()=>{ const d=new Date(); C('fecha-hoy').textContent=d.toLocaleDateString('es-ES',{day:'2-digit',month:'short',year:'numeric'}); })();
+
+// ══════════════════════════════════════════════
+// PANTALLA COMPLETA
+// ══════════════════════════════════════════════
+
+// ══════════════════════════════════════════════
+// GUARDADO · IMPORTAR / EXPORTAR
+// ══════════════════════════════════════════════
+let backupFormato='json';
+
+function collectBackup(){
+  const out={};
+  for(let i=0;i<localStorage.length;i++){
+    const k=localStorage.key(i);
+    if(k&&k.startsWith('portfolio_lite_')) out[k.replace('portfolio_lite_','')]=localStorage.getItem(k);
+  }
+  return out;
+}
+
+function backupToJSON(){
+  const data={};
+  const raw=collectBackup();
+  Object.keys(raw).forEach(k=>{ try{ data[k]=JSON.parse(raw[k]); }catch(e){ data[k]=raw[k]; } });
+  return JSON.stringify({_dashboard:'Cartera MC',_fecha:new Date().toISOString(),datos:data},null,2);
+}
+
+function backupToTexto(){
+  const raw=collectBackup();
+  const lines=['# COPIA DE SEGURIDAD · Cartera MC','# '+new Date().toLocaleString('es-ES'),''];
+  Object.keys(raw).sort().forEach(k=>lines.push(k+' = '+raw[k]));
+  return lines.join('\n');
+}
+
+function setBackupFormato(f){
+  backupFormato=f;
+  const on=b=>{b.style.background='rgba(0,229,255,.15)';b.style.borderColor='rgba(0,229,255,.4)';b.style.color='var(--accent)';};
+  const off=b=>{b.style.background='transparent';b.style.borderColor='var(--border)';b.style.color='var(--muted)';};
+  const bj=C('bk-tab-json'), bt=C('bk-tab-texto');
+  if(bj&&bt){ f==='json'?(on(bj),off(bt)):(on(bt),off(bj)); }
+  C('bk-area').value = f==='json'?backupToJSON():backupToTexto();
+  bkMsg('');
+}
+
+function bkMsg(t,color){ const e=C('bk-msg'); if(e){e.textContent=t;e.style.color=color||'var(--muted)';} }
+
+function openBackupModal(){
+  closeMenu();
+  C('backup-modal').classList.add('open');
+  setBackupFormato(backupFormato);
+}
+function closeBackupModal(){ C('backup-modal').classList.remove('open'); }
+
+function copyBackup(){
+  const a=C('bk-area');
+  a.select();
+  navigator.clipboard?.writeText(a.value).then(()=>bkMsg('Copiado al portapapeles','#00e676')).catch(()=>{document.execCommand('copy');bkMsg('Copiado','#00e676');});
+}
+
+function downloadBackup(){
+  const txt=C('bk-area').value;
+  const ext=backupFormato==='json'?'json':'txt';
+  const blob=new Blob([txt],{type:'text/plain;charset=utf-8'});
+  const a=document.createElement('a');
+  const f=new Date().toISOString().slice(0,10);
+  a.href=URL.createObjectURL(blob);
+  a.download=`CarteraMC_backup_${f}.${ext}`;
+  document.body.appendChild(a);a.click();
+  setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},200);
+  bkMsg('Archivo descargado','#00e676');
+}
+
+function loadBackupFile(input){
+  const f=input.files&&input.files[0]; if(!f)return;
+  const r=new FileReader();
+  r.onload=()=>{
+    C('bk-area').value=r.result;
+    const txt=(r.result||'').trim();
+    backupFormato=txt.startsWith('{')?'json':'texto';
+    const bj=C('bk-tab-json'), bt=C('bk-tab-texto');
+    const on=b=>{b.style.background='rgba(0,229,255,.15)';b.style.borderColor='rgba(0,229,255,.4)';b.style.color='var(--accent)';};
+    const off=b=>{b.style.background='transparent';b.style.borderColor='var(--border)';b.style.color='var(--muted)';};
+    if(bj&&bt){ backupFormato==='json'?(on(bj),off(bt)):(on(bt),off(bj)); }
+    bkMsg('Archivo cargado. Pulsa «Importar datos» para aplicarlo.','#ffd740');
+  };
+  r.readAsText(f);
+  input.value='';
+}
+
+function parseBackup(txt){
+  const t=(txt||'').trim();
+  if(!t) return null;
+  if(t.startsWith('{')){
+    const obj=JSON.parse(t);
+    const datos=obj.datos||obj;
+    const out={};
+    Object.keys(datos).forEach(k=>{
+      const v=datos[k];
+      out[k]=typeof v==='string'?v:JSON.stringify(v);
+    });
+    return out;
+  }
+  const out={};
+  t.split(/\r?\n/).forEach(line=>{
+    if(!line.trim()||line.trim().startsWith('#')) return;
+    const i=line.indexOf(' = ');
+    if(i<0) return;
+    out[line.slice(0,i).trim()]=line.slice(i+3);
+  });
+  return Object.keys(out).length?out:null;
+}
+
+function importBackup(){
+  let parsed;
+  try{ parsed=parseBackup(C('bk-area').value); }
+  catch(e){ bkMsg('No se ha podido leer: '+e.message,'#ff1744'); return; }
+  if(!parsed){ bkMsg('No se han encontrado datos válidos en el contenido','#ff1744'); return; }
+  const n=Object.keys(parsed).length;
+  if(!confirm(`Se van a restaurar ${n} bloques de datos y se sustituirán los actuales. ¿Continuar?`)) return;
+  Object.keys(parsed).forEach(k=>localStorage.setItem('portfolio_lite_'+k,parsed[k]));
+  bkMsg('Datos importados. Recargando…','#00e676');
+  setTimeout(()=>location.reload(),700);
+}
+
+function toggleFullscreen(){
+  const d=document;
+  if(!d.fullscreenElement&&!d.webkitFullscreenElement){
+    const el=d.documentElement;
+    (el.requestFullscreen||el.webkitRequestFullscreen).call(el);
+  }else{
+    (d.exitFullscreen||d.webkitExitFullscreen).call(d);
+  }
+}
+document.addEventListener('fullscreenchange',()=>{
+  const on=!!document.fullscreenElement;
+  const i=C('fs-icon');
+  if(i)i.textContent=on?'⤡':'⛶';
+  const b=C('fs-btn'); if(b) b.title=on?'Salir de pantalla completa':'Pantalla completa';
+});
+
+// ══════════════════════════════════════════════
+// SUB-TABS
+// ══════════════════════════════════════════════
+const MENU_LABELS={general:'Vista General',activos:'Resumen de Activos',movimientos:'Compras',ventas:'Ventas'};
+
+function toggleMenu(ev){
+  if(ev) ev.stopPropagation();
+  C('menu-panel')?.classList.toggle('open');
+}
+function closeMenu(){ C('menu-panel')?.classList.remove('open'); }
+document.addEventListener('click',e=>{
+  const p=C('menu-panel');
+  if(p&&p.classList.contains('open')&&!e.target.closest('.menu-wrap')) closeMenu();
+});
+function menuGo(id){
+  closeMenu();
+  switchRSubTab(id);
+}
+
+function switchRSubTab(id, btn){
+  document.querySelectorAll('.rsub-pane').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.menu-item[data-pane]').forEach(b=>b.classList.toggle('active',b.dataset.pane===id));
+  C('rsub-'+id)?.classList.add('active');
+  if(id==='ventas') setTimeout(ventasRender, 50);
+  if(id==='activos'){ renderResumen(); }
+  if(id==='movimientos'){ initYearSelect(); renderMovimientos(); }
+}
+
+// ══════════════════════════════════════════════
+// FORMATTERS
+// ══════════════════════════════════════════════
+const EUR   = n => (n==null||isNaN(n)) ? '—' : n.toLocaleString('es-ES',{minimumFractionDigits:2,maximumFractionDigits:2})+' €';
+const PCT   = n => (n==null||isNaN(n)) ? '—' : (n*100).toLocaleString('es-ES',{minimumFractionDigits:2,maximumFractionDigits:2})+'%';
+const PARTS = n => (n==null||isNaN(n)) ? '—' : n.toLocaleString('es-ES',{minimumFractionDigits:0,maximumFractionDigits:6});
+const FMT   = n => (n==null||isNaN(n)) ? '—' : n.toLocaleString('es-ES',{minimumFractionDigits:2,maximumFractionDigits:4});
+const fmtPct = v => (v>=0?'+':'')+v.toFixed(2)+'%';
+const pctColor = v => v>0?'var(--green)':v<0?'var(--red)':'var(--muted)';
+
+function badge(tipo){
+  if(tipo==='Oro') return '<span class="badge badge-oro">Oro</span>';
+  if(tipo==='SP500') return '<span class="badge badge-sp5">S&P 500</span>';
+  if(tipo==='MSCI World') return '<span class="badge badge-msci">MSCI World</span>';
+  if(tipo==='Emerging Markets') return '<span class="badge badge-em">Emerging Markets</span>';
+  return '<span class="badge badge-acc">Otro</span>';
+}
+
+// ══════════════════════════════════════════════
+// COTIZACIONES & OVERRIDES
+// ══════════════════════════════════════════════
+const COT_DEFAULT = {"sp500": 607.5, "oro": 77.975};
+let cotizaciones = load('cotizaciones', COT_DEFAULT);
+let tipoOverrides = load('tipo_overrides', {});
+let nombreOverrides = load('nombre_overrides', {});
+
+function getCotizacion(empresa){
+  return cotizaciones[empresa.trim().toLowerCase()] || 0;
+}
+
+// ══════════════════════════════════════════════
+// MOVEMENTS — datos iniciales desde Excel
+// ══════════════════════════════════════════════
+const MOV_DEFAULT = [{"_id":1000,"accion":"SP500","tipo":"ETF/Fondo","fecha":"2025-09-02","participaciones":0.085193,"valor_liquidativo":586.9},{"_id":1001,"accion":"SP500","tipo":"ETF/Fondo","fecha":"2025-10-02","participaciones":0.163201,"valor_liquidativo":612.74},{"_id":1002,"accion":"SP500","tipo":"ETF/Fondo","fecha":"2025-11-03","participaciones":0.157356,"valor_liquidativo":635.5},{"_id":1003,"accion":"SP500","tipo":"ETF/Fondo","fecha":"2025-12-04","participaciones":0.158538,"valor_liquidativo":630.76},{"_id":1004,"accion":"SP500","tipo":"ETF/Fondo","fecha":"2026-01-02","participaciones":0.158881,"valor_liquidativo":629.4},{"_id":1005,"accion":"SP500","tipo":"ETF/Fondo","fecha":"2026-02-02","participaciones":0.158453,"valor_liquidativo":631.1},{"_id":1006,"accion":"SP500","tipo":"ETF/Fondo","fecha":"2026-03-02","participaciones":0.159662,"valor_liquidativo":626.32},{"_id":1007,"accion":"SP500","tipo":"ETF/Fondo","fecha":"2026-04-02","participaciones":0.164609,"valor_liquidativo":607.5},{"_id":1008,"accion":"Oro","tipo":"ETF/Fondo","fecha":"2025-09-02","participaciones":0.8616697,"valor_liquidativo":58.025},{"_id":1009,"accion":"Oro","tipo":"ETF/Fondo","fecha":"2025-09-10","participaciones":16.533024,"valor_liquidativo":60.48},{"_id":1010,"accion":"Oro","tipo":"ETF/Fondo","fecha":"2025-10-02","participaciones":1.5625,"valor_liquidativo":64.0},{"_id":1011,"accion":"Oro","tipo":"ETF/Fondo","fecha":"2025-11-03","participaciones":1.481481,"valor_liquidativo":67.5},{"_id":1012,"accion":"Oro","tipo":"ETF/Fondo","fecha":"2025-12-04","participaciones":1.427042,"valor_liquidativo":70.75},{"_id":1013,"accion":"Oro","tipo":"ETF/Fondo","fecha":"2026-01-02","participaciones":1.375799,"valor_liquidativo":72.685},{"_id":1014,"accion":"Oro","tipo":"ETF/Fondo","fecha":"2026-02-02","participaciones":1.299038,"valor_liquidativo":76.98},{"_id":1015,"accion":"Oro","tipo":"ETF/Fondo","fecha":"2026-03-02","participaciones":1.120259,"valor_liquidativo":89.265},{"_id":1016,"accion":"Oro","tipo":"ETF/Fondo","fecha":"2026-04-02","participaciones":1.282462,"valor_liquidativo":77.975}];
+
+function loadMovements(){ return load('movements', MOV_DEFAULT); }
+function saveMovements(){ save('movements', movements); }
+let movements = loadMovements();
+movements.forEach((m,i)=>{ if(!m._id) m._id = Date.now()+i; });
+
+// ══════════════════════════════════════════════
+// COMPUTE RESUMEN FROM MOVEMENTS
+// ══════════════════════════════════════════════
+function computeResumen(){
+  const groups = {};
+  movements.forEach(m=>{
+    const key=m.accion;
+    if(!groups[key]) groups[key]={empresa:m.accion,tipo:m.tipo||'SP500',num_acciones:0,inversion_total:0};
+    const p=m.participaciones||0, v=m.valor_liquidativo||0;
+    groups[key].num_acciones+=p;
+    groups[key].inversion_total+=p*v;
+  });
+  return Object.values(groups).map(g=>{
+    const k=g.empresa.trim().toLowerCase();
+    const cotizacion=cotizaciones[k]||0;
+    const tipo=tipoOverrides[k]||g.tipo;
+    const empresa=nombreOverrides[k]||g.empresa;
+    const valor_actual=g.num_acciones*cotizacion;
+    const precio_medio=g.num_acciones>0?g.inversion_total/g.num_acciones:0;
+    const gyp=valor_actual-g.inversion_total;
+    const rent=g.inversion_total>0?gyp/g.inversion_total:0;
+    return {empresa,_key:k,tipo,cotizacion,num_acciones:g.num_acciones,precio_medio,inversion_total:g.inversion_total,valor_actual,gyp,rent};
+  });
+}
+
+// ══════════════════════════════════════════════
+// OVERVIEW KPIs
+// ══════════════════════════════════════════════
+function refreshOverviewKPIs(){
+  const data=computeResumen();
+  const total_inv=data.reduce((s,r)=>s+(r.inversion_total||0),0);
+  const total_val=data.reduce((s,r)=>s+(r.valor_actual||0),0);
+  const total_gyp=total_val-total_inv;
+  const rent=total_inv>0?total_gyp/total_inv:0;
+  const pos=data.length;
+  C('ovw-total-valor').textContent=EUR(total_val);
+  C('ovw-total-valor').className='kpi-value accent';
+  C('ovw-total-inv').textContent=EUR(total_inv);
+  C('ovw-total-inv').className='kpi-value';   // blanco
+  C('ovw-total-inv').style.color='var(--text)';
+  if(total_inv>0){
+    C('ovw-gyp').textContent=(total_gyp>=0?'+':'')+total_gyp.toLocaleString('es-ES',{minimumFractionDigits:2,maximumFractionDigits:2})+' €';
+    C('ovw-gyp').className='kpi-value '+(total_gyp>=0?'up':'down');
+    C('ovw-rent').textContent=(rent>=0?'+':'')+PCT(rent).replace('€','');
+    C('ovw-rent').className='kpi-value '+(rent>=0?'up':'down');
+  }
+}
+
+// ══════════════════════════════════════════════
+// STATE SORTS
+// ══════════════════════════════════════════════
+let rSort={col:'inversion_total',dir:-1};
+let mSort={col:'fecha',dir:-1};
+let editingMovId=null;
+let deletingMovId=null;
+let editingResumenKey=null;
+let deletingAssetKey=null;
+
+// ══════════════════════════════════════════════
+// RESUMEN TABLE
+// ══════════════════════════════════════════════
+function getFilteredResumen(){
+  const q=C('r-search').value.trim().toLowerCase();
+  const tipo=C('r-tipo').value;
+  const rentab=C('r-rentab').value;
+  return computeResumen().filter(r=>{
+    if(q&&!r.empresa.toLowerCase().includes(q)) return false;
+    if(tipo&&r.tipo!==tipo) return false;
+    if(rentab==='pos'&&r.gyp<0) return false;
+    if(rentab==='neg'&&r.gyp>=0) return false;
+    return true;
+  }).sort((a,b)=>{
+    const av=a[rSort.col],bv=b[rSort.col];
+    if(typeof av==='string') return rSort.dir*av.localeCompare(bv||'');
+    return rSort.dir*((av||0)-(bv||0));
+  });
+}
+
+function sortR(col){
+  rSort=rSort.col===col?{col,dir:rSort.dir*-1}:{col,dir:-1};
+  document.querySelectorAll('#r-table th').forEach(t=>t.classList.remove('sorted'));
+  event.currentTarget.classList.add('sorted');
+  renderResumen();
+}
+
+function buildKPIs(data){
+  const total_inv=data.reduce((s,r)=>s+(r.inversion_total||0),0);
+  const total_val=data.reduce((s,r)=>s+(r.valor_actual||0),0);
+  const total_gyp=total_val-total_inv;
+  const rent=total_inv>0?total_gyp/total_inv:0;
+  const gCls=total_gyp>=0?'pos':'neg', rCls=rent>=0?'pos':'neg';
+  C('kpi-row').innerHTML=`
+    <div class="kpi k-val"><div class="kpi-label">Valor Actual</div><div class="kpi-val" style="color:var(--accent)">${EUR(total_val)}</div></div>
+    <div class="kpi k-inv"><div class="kpi-label">Total Invertido</div><div class="kpi-val">${EUR(total_inv)}</div></div>
+    <div class="kpi k-gyp"><div class="kpi-label">G&P sin Dividendos</div><div class="kpi-val ${gCls}">${EUR(total_gyp)}</div></div>
+    <div class="kpi k-rent"><div class="kpi-label">Rentabilidad · <span style="font-size:9px;color:var(--muted)">${data.length} pos.</span></div><div class="kpi-val ${rCls}">${PCT(rent)}</div></div>
+  `;
+}
+
+function renderResumen(){
+  const data=getFilteredResumen();
+  buildKPIs(data);
+  C('r-info').textContent=`Mostrando ${data.length} de ${computeResumen().length} posiciones`;
+  C('r-tbody').innerHTML=data.length?data.map(r=>{
+    const gCls=r.gyp>=0?'pos':'neg',rCls=r.rent>=0?'pos':'neg';
+    return `<tr>
+      <td><strong style="color:#63b3ed">${r.empresa}</strong></td>
+      <td>${badge(r.tipo)}</td>
+      <td>${FMT(r.cotizacion)} €</td>
+      <td>${PARTS(r.num_acciones)}</td>
+      <td>${r.precio_medio>0?FMT(r.precio_medio)+' €':'—'}</td>
+      <td>${EUR(r.inversion_total)}</td>
+      <td>${EUR(r.valor_actual)}</td>
+      <td class="${gCls}">${EUR(r.gyp)}</td>
+      <td class="${rCls}">${PCT(r.rent)}</td>
+      <td style="display:flex;gap:6px;padding:10px 14px"><button class="btn-edit" onclick="openResumenModal('${r._key}')">✎</button><button class="btn-del" onclick="openDeleteAssetConfirm('${r._key}')">✕</button></td>
+    </tr>`;
+  }).join(''):'<tr><td colspan="10" class="empty-state">No hay posiciones · Añade compras para comenzar</td></tr>';
+}
+
+function resetResumenFilters(){
+  C('r-search').value='';C('r-tipo').value='';C('r-rentab').value='';renderResumen();
+}
+
+// ══════════════════════════════════════════════
+// MOVIMIENTOS
+// ══════════════════════════════════════════════
+const ACTIVOS_BASE = ['MSCI World','Emerging Markets'];
+
+function initYearSelect(){
+  const sel=C('m-year');
+  const years=[...new Set(movements.map(m=>(m.fecha||'').substring(0,4)).filter(Boolean))].sort();
+  const curY=sel.value;
+  sel.innerHTML='<option value="">Todos los años</option>'+years.map(y=>`<option value="${y}">${y}</option>`).join('');
+  if(curY) sel.value=curY;
+
+  // Populate activo filter dynamically
+  const selA=C('m-activo');
+  if(selA){
+    const activos=[...new Set([...movements.map(m=>m.accion).filter(Boolean), ...ACTIVOS_BASE])].sort();
+    const curA=selA.value;
+    selA.innerHTML='<option value="">Todos</option>'+activos.map(a=>`<option value="${a}">${a}</option>`).join('');
+    if(curA&&activos.includes(curA)) selA.value=curA;
+  }
+}
+
+function getFilteredMovimientos(){
+  const q=C('m-search').value.trim().toLowerCase();
+  const activo=C('m-activo')?.value||'';
+  const year=C('m-year').value;
+  const month=C('m-month').value;
+  return movements.filter(m=>{
+    if(q&&!(m.accion||'').toLowerCase().includes(q)) return false;
+    if(activo&&m.accion!==activo) return false;
+    if(year&&(m.fecha||'').substring(0,4)!==year) return false;
+    if(month&&(m.fecha||'').substring(5,7)!==month) return false;
+    return true;
+  }).sort((a,b)=>{
+    if(mSort.col==='_total'){const av=(a.participaciones||0)*(a.valor_liquidativo||0);const bv=(b.participaciones||0)*(b.valor_liquidativo||0);return mSort.dir*(av-bv);}
+    const av=a[mSort.col],bv=b[mSort.col];
+    if(typeof av==='string') return mSort.dir*(av||'').localeCompare(bv||'');
+    return mSort.dir*((av||0)-(bv||0));
+  });
+}
+
+function sortM(col){
+  mSort=mSort.col===col?{col,dir:mSort.dir*-1}:{col,dir:-1};
+  document.querySelectorAll('#m-table th').forEach(t=>t.classList.remove('sorted'));
+  event.currentTarget.classList.add('sorted');
+  renderMovimientos();
+}
+
+function renderMovimientos(){
+  const data=getFilteredMovimientos();
+  const totalInv=data.reduce((s,m)=>s+(m.participaciones||0)*(m.valor_liquidativo||0),0);
+  const activos=[...new Set(data.map(m=>m.accion))].length;
+  const meses=[...new Set(data.map(m=>(m.fecha||'').substring(0,7)).filter(Boolean))].length;
+  C('m-info').textContent=`Mostrando ${data.length} de ${movements.length} movimientos`;
+  C('mov-summary').innerHTML=`
+    <div class="ms"><div class="ms-v">${data.length}</div><div class="ms-l">Movimientos</div></div>
+    <div class="ms"><div class="ms-v">${EUR(totalInv)}</div><div class="ms-l">Total Invertido</div></div>
+    <div class="ms"><div class="ms-v">${activos}</div><div class="ms-l">Activos Distintos</div></div>
+    <div class="ms"><div class="ms-v">${meses}</div><div class="ms-l">Meses con Compras</div></div>
+  `;
+  C('m-tbody').innerHTML=data.length?data.map(m=>{
+    const total=(m.participaciones||0)*(m.valor_liquidativo||0);
+    return `<tr>
+      <td><strong style="color:#63b3ed">${m.accion}</strong></td>
+      <td>${badge(m.tipo||'SP500')}</td>
+      <td><span class="inline-date-badge">${m.fecha||'—'}</span></td>
+      <td>${PARTS(m.participaciones)}</td>
+      <td>${FMT(m.valor_liquidativo)} €</td>
+      <td>${EUR(total)}</td>
+      <td style="display:flex;gap:6px;padding:10px 14px">
+        <button class="btn-edit" onclick="openEditModal(${m._id})">✎</button>
+        <button class="btn-del" onclick="openDeleteConfirm(${m._id})">✕</button>
+      </td>
+    </tr>`;
+  }).join(''):'<tr><td colspan="7" class="empty-state">No hay compras registradas · Usa el botón ＋ para añadir</td></tr>';
+}
+
+function resetMovFilters(){
+  C('m-search').value='';
+  if(C('m-activo')) C('m-activo').value='';
+  C('m-year').value='';C('m-month').value='';
+  renderMovimientos();
+}
+
+// ══════════════════════════════════════════════
+// MODAL COMPRA: ADD / EDIT / DELETE
+// ══════════════════════════════════════════════
+function openAddModal(){
+  editingMovId=null;
+  C('modal-title').textContent='Añadir Movimiento';
+  C('f-accion').value='';C('f-tipo').value='SP500';
+  C('f-fecha').value=new Date().toISOString().substring(0,10);
+  C('f-participaciones').value='';C('f-precio').value='';
+  C('mov-modal').classList.add('open');
+  setTimeout(()=>C('f-accion').focus(),100);
+}
+
+function openEditModal(id){
+  editingMovId=id;
+  const m=movements.find(x=>x._id===id);if(!m)return;
+  C('modal-title').textContent='Editar Movimiento';
+  C('f-accion').value=m.accion;C('f-tipo').value=m.tipo||'SP500';
+  C('f-fecha').value=(m.fecha||'').substring(0,10);
+  C('f-participaciones').value=m.participaciones;C('f-precio').value=m.valor_liquidativo;
+  C('mov-modal').classList.add('open');
+}
+
+function closeModal(){ C('mov-modal').classList.remove('open'); }
+
+function saveMovimiento(){
+  const accion=C('f-accion').value.trim();
+  const tipo=C('f-tipo').value;
+  const fecha=C('f-fecha').value;
+  const partic=parseFloat(C('f-participaciones').value);
+  const precio=parseFloat(C('f-precio').value);
+  if(!accion||!fecha||isNaN(partic)||isNaN(precio)){alert('Por favor rellena todos los campos (*)');return;}
+  if(editingMovId!==null){
+    const idx=movements.findIndex(x=>x._id===editingMovId);
+    if(idx>=0) movements[idx]={...movements[idx],accion,tipo,fecha,participaciones:partic,valor_liquidativo:precio};
+  } else {
+    movements.push({_id:Date.now(),accion,tipo,fecha,participaciones:partic,valor_liquidativo:precio});
+  }
+  closeModal();refreshAll();
+}
+
+function openDeleteConfirm(id){ deletingMovId=id;C('confirm-modal').classList.add('open'); }
+function closeConfirm(){ C('confirm-modal').classList.remove('open');deletingMovId=null; }
+function doDelete(){
+  if(deletingMovId===null)return;
+  movements=movements.filter(m=>m._id!==deletingMovId);
+  closeConfirm();refreshAll();
+}
+
+// ══════════════════════════════════════════════
+// RESUMEN MODAL (cotización)
+// ══════════════════════════════════════════════
+function openResumenModal(key){
+  editingResumenKey=key;
+  const r=computeResumen().find(x=>x._key===key);if(!r)return;
+  C('resumen-edit-empresa').textContent=r.empresa;
+  C('resumen-edit-nombre').value=nombreOverrides[key]||r.empresa;
+  C('resumen-edit-cotizacion').value=cotizaciones[key]||0;
+  C('resumen-edit-tipo').value=tipoOverrides[key]||r.tipo;
+  C('resumen-modal').classList.add('open');
+}
+
+function saveResumenEdit(){
+  if(!editingResumenKey)return;
+  const nombre=C('resumen-edit-nombre').value.trim();
+  const cot=parseFloat(C('resumen-edit-cotizacion').value)||0;
+  const tipo=C('resumen-edit-tipo').value;
+  cotizaciones[editingResumenKey]=cot;
+  tipoOverrides[editingResumenKey]=tipo;
+  if(nombre) nombreOverrides[editingResumenKey]=nombre;
+  save('cotizaciones',cotizaciones);save('tipo_overrides',tipoOverrides);save('nombre_overrides',nombreOverrides);
+  C('resumen-modal').classList.remove('open');
+  refreshAll();
+}
+
+function openDeleteAssetConfirm(key){
+  deletingAssetKey=key;
+  const r=computeResumen().find(x=>x._key===key);
+  C('confirm-asset-text').textContent=`¿Eliminar todas las compras de "${r?r.empresa:key}"?`;
+  C('confirm-asset-modal').classList.add('open');
+}
+
+function doDeleteAsset(){
+  if(!deletingAssetKey)return;
+  movements=movements.filter(m=>m.accion.trim().toLowerCase()!==deletingAssetKey);
+  C('confirm-asset-modal').classList.remove('open');deletingAssetKey=null;
+  refreshAll();
+}
+
+// ══════════════════════════════════════════════
+// REFRESH ALL
+// ══════════════════════════════════════════════
+function autoFillActivo(){
+  const tipo=C('f-tipo'), act=C('f-accion');
+  if(!tipo||!act) return;
+  const label=tipo.options[tipo.selectedIndex]?tipo.options[tipo.selectedIndex].text:tipo.value;
+  act.value=label;
+}
+
+function refreshAll(){
+  saveMovements();
+  initYearSelect();
+  refreshOverviewKPIs();
+  renderResumen();
+  renderMovimientos();
+  buildActivosDonut();
+  // Gráfico de evolución solo se actualiza manualmente
+  renderHeatmap();
+  renderStatsTable();
+}
+
+// ══════════════════════════════════════════════
+// ACTIVOS DONUT CHART
+// ══════════════════════════════════════════════
+const ACTIVOS_MODO_STORAGE='activos_modo';
+let activosModo=load(ACTIVOS_MODO_STORAGE,'valor'); // 'valor' | 'inversion'
+let _activosChart=null;
+
+// Colores fijos por activo; el resto se reparte de una paleta
+const ACTIVOS_COLORS={
+  'sp500':'#40c4ff','s&p500':'#40c4ff','oro':'#ffd740',
+  'msciworld':'#00ffa3','emergingmarkets':'#ff9100'
+};
+const ACTIVOS_PALETTE=['#7c4dff','#ff4081','#69f0ae','#ffab40','#18ffff','#b388ff','#f06292','#aed581'];
+function colorActivo(name,i){
+  const k=(name||'').toLowerCase().replace(/[\s._-]/g,'');
+  return ACTIVOS_COLORS[k]||ACTIVOS_PALETTE[i%ACTIVOS_PALETTE.length];
+}
+
+function setActivosModo(m){
+  activosModo=m;
+  save(ACTIVOS_MODO_STORAGE,m);
+  const on=(b)=>{b.style.background='rgba(0,229,255,0.15)';b.style.color='var(--accent)';};
+  const off=(b)=>{b.style.background='transparent';b.style.color='var(--muted)';};
+  const bv=C('act-tab-valor'), bi=C('act-tab-inv');
+  if(bv&&bi){ m==='valor'?(on(bv),off(bi)):(on(bi),off(bv)); }
+  buildActivosDonut();
+}
+
+function buildActivosDonut(){
+  if(_activosChart){_activosChart.destroy();_activosChart=null;}
+  const ctx=C('activosDonutChart');if(!ctx)return;
+  const campo=activosModo==='inversion'?'inversion_total':'valor_actual';
+  const data=computeResumen()
+    .map((r,i)=>({name:r.empresa,eur:r[campo]||0,color:colorActivo(r.empresa,i)}))
+    .filter(d=>d.eur>0)
+    .sort((a,b)=>b.eur-a.eur);
+  const total=data.reduce((s,d)=>s+d.eur,0);
+  const leg=C('activos-legend');
+  if(!data.length){
+    ctx.style.display='none';
+    if(leg) leg.innerHTML='<span style="color:var(--muted);font-size:10px;font-family:\'JetBrains Mono\'">Sin datos: añade compras en Movimientos</span>';
+    return;
+  }
+  ctx.style.display='block';
+  _activosChart=new Chart(ctx,{
+    type:'doughnut',
+    data:{labels:data.map(d=>d.name),datasets:[{data:data.map(d=>d.eur),backgroundColor:data.map(d=>d.color+'cc'),borderColor:data.map(d=>d.color),borderWidth:2,hoverOffset:8}]},
+    options:{
+      plugins:{legend:{display:false},tooltip:{backgroundColor:'#111b2a',borderColor:'#1d2d42',borderWidth:1,titleColor:'#e8f4fc',bodyColor:'#a0b4c8',callbacks:{
+        label:ctx2=>{
+          const eur=ctx2.parsed;
+          const pct=total>0?(eur/total*100):0;
+          return ` ${ctx2.label}: ${eur.toLocaleString('es-ES',{minimumFractionDigits:2,maximumFractionDigits:2})} € (${pct.toFixed(1)}%)`;
+        }
+      }}},
+      cutout:'68%'
+    }
+  });
+  if(leg) leg.innerHTML=data.map(d=>{
+    const pct=total>0?(d.eur/total*100):0;
+    return `<span style="display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:20px;padding:3px 10px;font-size:10px;font-family:'JetBrains Mono'"><span style="width:8px;height:8px;border-radius:50%;background:${d.color};flex-shrink:0"></span>${d.name}: ${pct.toFixed(1)}% <span style="opacity:.55">(${d.eur.toLocaleString('es-ES',{minimumFractionDigits:0,maximumFractionDigits:0})} €)</span></span>`;
+  }).join('');
+}
+
+// ══════════════════════════════════════════════
+// EVO DUAL CHART
+// ══════════════════════════════════════════════
+const EVO_STORAGE='evo_data';
+let evoData=load(EVO_STORAGE,[]);
+let _evoDualChart=null;
+
+// ══════════════════════════════════════════════
+// AUTO-COMPUTE HELPERS
+// ══════════════════════════════════════════════
+const MONTH_NAMES=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+
+function getMonthKey(fecha){ return (fecha||'').substring(0,7); }
+
+function getAllMonths(){
+  return [...new Set(movements.map(m=>getMonthKey(m.fecha||'')).filter(Boolean))].sort();
+}
+
+// Builds map: activo_key → { 'YYYY-MM': price } using latest purchase in each month as proxy
+function buildMonthlyPriceMap(){
+  const map={}; // activo_lc → { month: price }
+  movements.forEach(m=>{
+    const key=(m.accion||'').trim().toLowerCase();
+    const month=getMonthKey(m.fecha||'');
+    if(!month||!key) return;
+    if(!map[key]) map[key]={};
+    // Keep latest date's price within the month
+    if(!map[key][month+'_date']||m.fecha>map[key][month+'_date']){
+      map[key][month]=m.valor_liquidativo;
+      map[key][month+'_date']=m.fecha;
+    }
+  });
+  // Clean _date helper keys
+  Object.values(map).forEach(v=>Object.keys(v).filter(k=>k.includes('_date')).forEach(k=>delete v[k]));
+  // Fill-forward gaps across all months
+  const allM=getAllMonths();
+  Object.keys(map).forEach(activo=>{
+    let last=0;
+    allM.forEach(mo=>{ if(map[activo][mo]) last=map[activo][mo]; else if(last>0) map[activo][mo]=last; });
+    // Also fill using cotizaciones as the "now" value for the latest month
+    const cot=cotizaciones[activo]||0;
+    if(cot>0) map[activo][allM[allM.length-1]]=cot;
+  });
+  return map;
+}
+
+// Compute portfolio evolution (Time-Weighted Return approach)
+// Returns [{label, acum, var}] for each month in movements
+function computePortfolioEvolution(){
+  const allM=getAllMonths();
+  if(!allM.length) return [];
+  const priceMap=buildMonthlyPriceMap();
+
+  let cumulativeFactor=1;
+  const result=[];
+
+  allM.forEach((month,i)=>{
+    const prevMonth=i>0?allM[i-1]:null;
+
+    // Holdings at START of this month = all purchases BEFORE this month
+    const holdingsStart={};
+    movements.forEach(m=>{
+      const mm=getMonthKey(m.fecha||'');
+      if(mm&&prevMonth&&mm<=prevMonth){
+        const key=(m.accion||'').trim().toLowerCase();
+        holdingsStart[key]=(holdingsStart[key]||0)+(m.participaciones||0);
+      }
+    });
+
+    // Compute pure price return on existing holdings: start holdings × (currentMonthPrice / prevMonthPrice)
+    let monthlyReturn=0;
+    if(i>0){
+      let valAtPrev=0, valAtCurr=0;
+      Object.entries(holdingsStart).forEach(([activo,partic])=>{
+        const pPrev=priceMap[activo]?.[prevMonth]||0;
+        const pCurr=priceMap[activo]?.[month]||pPrev;
+        valAtPrev+=partic*pPrev;
+        valAtCurr+=partic*pCurr;
+      });
+      if(valAtPrev>0) monthlyReturn=(valAtCurr-valAtPrev)/valAtPrev*100;
+    }
+
+    // Update cumulative
+    cumulativeFactor *= (1+(i===0?0:monthlyReturn)/100);
+    const acum=(cumulativeFactor-1)*100;
+
+    const [yr,mo]=month.split('-');
+    result.push({label:`${MONTH_NAMES[parseInt(mo)-1]} ${yr.slice(2)}`,acum:+acum.toFixed(2),var:+monthlyReturn.toFixed(2)});
+  });
+  return result;
+}
+
+// Get the evo data to use: manual override takes priority, else auto-compute
+function getEvoDataResolved(){
+  return (evoData&&evoData.length>0)?evoData:computePortfolioEvolution();
+}
+
+// ══════════════════════════════════════════════
+// HEATMAP
+// ══════════════════════════════════════════════
+// Lee etiquetas de mes en cualquier formato: "Sep 25", "Sep-25", "Sep 2025",
+// "sep/2025", "Septiembre 2025" o "2025-09" → {year:'2025', monIdx:8}
+function parseEvoLabel(label){
+  const raw=(label||'').toString().trim();
+  if(!raw) return null;
+  const iso=/^(\d{4})[-\/](\d{1,2})$/.exec(raw);
+  if(iso){
+    const mi=parseInt(iso[2],10)-1;
+    if(mi>=0&&mi<12) return {year:iso[1],monIdx:mi};
+  }
+  const norm=raw.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+  const m=/^([a-z]{3,})[\s\-\/\.]*(\d{2,4})$/.exec(norm);
+  if(!m) return null;
+  const pre=m[1].substring(0,3);
+  const monIdx=MONTH_NAMES.findIndex(x=>x.toLowerCase()===pre);
+  if(monIdx<0) return null;
+  let y=m[2];
+  if(y.length===2) y='20'+y;
+  else if(y.length===3) return null;
+  return {year:y,monIdx};
+}
+
+function renderHeatmap(){
+  const wrap=C('heatmapWrap');if(!wrap)return;
+  const evo=getEvoDataResolved();
+  const badge=C('hm-auto-badge');
+  if(badge) badge.style.display=(evoData&&evoData.length>0)?'none':'inline-flex';
+
+  if(!evo||!evo.length){
+    wrap.innerHTML='<div style="color:var(--muted);font-size:11px;font-family:\'JetBrains Mono\';padding:16px 0">Sin datos — añade compras para ver el rendimiento mensual automáticamente</div>';
+    return;
+  }
+
+  // Build month→value map
+  const dataMap={};
+  evo.forEach(d=>{
+    const parsed=parseEvoLabel(d.label);
+    if(!parsed) return;
+    const key=`${parsed.year}-${String(parsed.monIdx+1).padStart(2,'0')}`;
+    dataMap[key]=d.var;
+  });
+
+  // Get year range
+  const keys=Object.keys(dataMap).sort();
+  if(!keys.length){
+    wrap.innerHTML='<div style="color:var(--muted);font-size:11px;font-family:\'JetBrains Mono\';padding:16px 0">No se han podido leer los meses. Usa etiquetas tipo «Sep-25», «Sep 25» o «Sep 2025» en el editor de evolución.</div>';
+    return;
+  }
+  const years=[...new Set(keys.map(k=>k.split('-')[0]))].sort();
+
+  // Color scale
+  function hmColor(v){
+    if(v===null||v===undefined) return null;
+    const abs=Math.min(Math.abs(v),8);
+    const ratio=abs/8;
+    if(v>0){
+      const g=Math.round(50+ratio*180);
+      return `rgba(0,${g},100,${0.15+ratio*0.65})`;
+    } else if(v<0){
+      const r=Math.round(120+ratio*135);
+      return `rgba(${r},23,68,${0.15+ratio*0.65})`;
+    }
+    return 'rgba(29,45,66,0.4)';
+  }
+  function hmTextColor(v){
+    if(v===null||v===undefined) return 'var(--muted)';
+    return Math.abs(v)>1.5?'#fff':'var(--text)';
+  }
+
+  const colW=`calc((100% - 40px) / 12)`;
+  let html=`<div style="min-width:520px">`;
+
+  // Header row
+  html+=`<div style="display:grid;grid-template-columns:38px repeat(12,1fr) 80px;gap:3px;margin-bottom:3px">`;
+  html+=`<div></div>`;
+  MONTH_NAMES.forEach(m=>html+=`<div class="hm-header">${m}</div>`);
+  html+=`<div class="hm-header" style="color:var(--gold);letter-spacing:.5px">TOTAL</div>`;
+  html+=`</div>`;
+
+  // Data rows
+  years.forEach(yr=>{
+    html+=`<div style="display:grid;grid-template-columns:38px repeat(12,1fr) 80px;gap:3px;margin-bottom:3px">`;
+    html+=`<div class="hm-year-label">${yr}</div>`;
+    let compoundFactor=1;
+    for(let mo=1;mo<=12;mo++){
+      const key=`${yr}-${String(mo).padStart(2,'0')}`;
+      const v=dataMap.hasOwnProperty(key)?dataMap[key]:null;
+      const bg=v!==null?hmColor(v):'rgba(29,45,66,0.2)';
+      const col=v!==null?hmTextColor(v):'rgba(90,122,153,0.3)';
+      const txt=v!==null?(v>=0?'+':'')+v.toFixed(2)+'%':'—';
+      const tip=v!==null?`${MONTH_NAMES[mo-1]} ${yr.slice(2)}: ${txt}`:'Sin datos';
+      html+=`<div class="hm-cell" style="background:${bg};color:${col}" onmouseenter="showHmTip(event,'${tip}')" onmouseleave="hideHmTip()">${txt}</div>`;
+      if(v!==null) compoundFactor*=(1+v/100);
+    }
+    const annualRet=(compoundFactor-1)*100;
+    const annPos=annualRet>=0;
+    const annTxt=(annPos?'+':'')+annualRet.toFixed(2)+'%';
+    const annIntensity=Math.min(1,Math.abs(annualRet)/20);
+    const annBg=annPos?`rgba(255,215,64,${0.12+annIntensity*0.55})`:`rgba(255,23,68,${0.10+annIntensity*0.5})`;
+    const annTxtCol=annPos?'#ffd740':'#ff1744';
+    html+=`<div class="hm-cell" style="background:${annBg};border:1px solid rgba(255,215,64,0.28);color:${annTxtCol};font-weight:800" onmouseenter="showHmTip(event,'${yr} rentabilidad compuesta: ${annTxt}')" onmouseleave="hideHmTip()">${annTxt}</div>`;
+    html+=`</div>`;
+  });
+  html+=`</div>`;
+  wrap.innerHTML=html;
+}
+
+const _hmTip=()=>C('hm-tooltip');
+function showHmTip(e,txt){const t=_hmTip();if(!t)return;t.style.display='block';t.textContent=txt;t.style.left=(e.clientX+12)+'px';t.style.top=(e.clientY-36)+'px';}
+function hideHmTip(){const t=_hmTip();if(t)t.style.display='none';}
+
+function buildEvoDualChart(data){
+  if(evoData&&evoData.length){ sortEvoData(); recomputeEvoAcum(); }
+  if(_evoDualChart){_evoDualChart.destroy();_evoDualChart=null;}
+  const ctx=C('evolucionDualChart');if(!ctx)return;
+  const resolved=(data&&data.length>0)?data:computePortfolioEvolution();
+  if(!resolved||!resolved.length){return;}
+  const labels=resolved.map(d=>d.label);
+  const acum=resolved.map(d=>d.acum);
+  const varM=resolved.map(d=>d.var);
+  _evoDualChart=new Chart(ctx,{
+    type:'bar',
+    data:{labels,datasets:[
+      {type:'bar',label:'Variación mensual (%)',data:varM,backgroundColor:varM.map(v=>v>=0?'rgba(0,230,118,0.35)':'rgba(255,23,68,0.35)'),borderColor:varM.map(v=>v>=0?'rgba(0,230,118,0.7)':'rgba(255,23,68,0.7)'),borderWidth:1,borderRadius:4,yAxisID:'y2',order:2},
+      {type:'line',label:'Rentabilidad acumulada (%)',data:acum,borderColor:'#00e5ff',backgroundColor:'rgba(0,229,255,0.08)',fill:true,tension:0.4,borderWidth:2.5,pointRadius:5,pointHoverRadius:7,pointBackgroundColor:varM.map(v=>v>=0?'#00e676':'#ff1744'),pointBorderColor:varM.map(v=>v>=0?'#00e676':'#ff1744'),pointBorderWidth:2,yAxisID:'y1',order:1}
+    ]},
+    options:{
+      maintainAspectRatio:false,
+      plugins:{legend:{labels:{color:'#5a7a99',font:{family:'Syne',size:11}}},tooltip:{mode:'index',intersect:false}},
+      scales:{
+        x:{grid:{color:'rgba(29,45,66,0.5)'},ticks:{color:'#5a7a99',font:{size:8}}},
+        y1:{position:'left',grid:{color:'rgba(29,45,66,0.5)'},ticks:{color:'#00e5ff',font:{size:10},callback:v=>v+'%'},title:{display:true,text:'Acumulado %',color:'#00e5ff',font:{size:10}}},
+        y2:{position:'right',grid:{display:false},ticks:{color:'#5a7a99',font:{size:10},callback:v=>v+'%'},title:{display:true,text:'Variación mensual %',color:'#5a7a99',font:{size:10}}}
+      }
+    }
+  });
+}
+
+// El acumulado se calcula encadenando las variaciones mensuales
+// Ordena los meses cronológicamente; lo que no se pueda leer queda al final
+function sortEvoData(){
+  const key=l=>{const p=parseEvoLabel(l);return p?`${p.year}-${String(p.monIdx+1).padStart(2,'0')}`:null;};
+  evoData=evoData.map((d,i)=>({d,i,k:key(d.label)}))
+    .sort((a,b)=>{
+      if(a.k&&b.k) return a.k===b.k?a.i-b.i:a.k.localeCompare(b.k);
+      if(a.k) return -1;
+      if(b.k) return 1;
+      return a.i-b.i;
+    })
+    .map(x=>x.d);
+}
+
+function recomputeEvoAcum(){
+  let f=1;
+  evoData.forEach(d=>{
+    const v=Number(d.var);
+    f*=(1+((isNaN(v)?0:v)/100));
+    d.acum=+((f-1)*100).toFixed(2);
+  });
+}
+
+function renderEvoTable(){
+  const body=C('evo-table-body');if(!body)return;
+  sortEvoData();
+  recomputeEvoAcum();
+  body.innerHTML='';
+  evoData.forEach((d,i)=>{
+    const tr=document.createElement('tr');
+    tr.style.cssText='border-bottom:1px solid rgba(29,45,66,0.5);transition:background .15s';
+    tr.onmouseenter=()=>tr.style.background='rgba(0,229,255,0.03)';
+    tr.onmouseleave=()=>tr.style.background='';
+    tr.innerHTML=`
+      <td style="padding:8px 14px">
+        <input type="text" value="${d.label}" data-idx="${i}" data-field="label" style="width:82px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:'JetBrains Mono';font-size:11px;padding:5px 8px;outline:none" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'">
+      </td>
+      <td style="padding:8px 14px;text-align:right">
+        <span style="display:inline-block;width:90px;background:rgba(0,229,255,0.05);border:1px dashed rgba(0,229,255,0.28);border-radius:6px;color:var(--accent);font-family:'JetBrains Mono';font-size:11px;padding:5px 8px;text-align:right" title="Automático: encadenado de las variaciones mensuales">${(d.acum>=0?'+':'')+Number(d.acum||0).toFixed(2)}</span>
+      </td>
+      <td style="padding:8px 14px;text-align:right">
+        <input type="number" step="0.01" value="${d.var}" data-idx="${i}" data-field="var" style="width:90px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:'JetBrains Mono';font-size:11px;padding:5px 8px;text-align:right;outline:none" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'">
+      </td>
+      <td style="padding:8px 14px;text-align:center">
+        <button onclick="removeEvoRow(${i})" style="background:transparent;border:1px solid rgba(255,23,68,0.35);border-radius:5px;color:#ff1744;cursor:pointer;font-size:11px;width:26px;height:26px;display:inline-flex;align-items:center;justify-content:center">✕</button>
+      </td>`;
+    body.appendChild(tr);
+  });
+}
+
+function addEvoRow(){
+  evoData.push({label:'Mes',acum:0,var:0});renderEvoTable();
+  const inputs=C('evo-table-body').querySelectorAll('tr input');
+  const last=[...C('evo-table-body').querySelectorAll('tr')].find(tr=>tr.querySelector('input')&&tr.querySelector('input').value==='Mes');
+  if(last){const inp=last.querySelector('input');inp.focus();inp.select();}
+}
+
+function removeEvoRow(i){
+  evoData.splice(i,1);renderEvoTable();
+}
+
+function applyEvoData(){
+  const rows=C('evo-table-body').querySelectorAll('tr');
+  rows.forEach((tr,i)=>{
+    const inputs=tr.querySelectorAll('input');
+    if(inputs.length>=2&&evoData[i]){
+      evoData[i].label=inputs[0].value||evoData[i].label;
+      evoData[i].var=parseFloat(inputs[1].value)||0;
+    }
+  });
+  sortEvoData();
+  recomputeEvoAcum();
+  renderEvoTable();
+  save(EVO_STORAGE,evoData);
+  buildEvoDualChart(evoData);
+  renderHeatmap();
+  renderStatsTable();
+  buildCompChart();
+  refreshCompKPIs();
+  if(C('cmp-editor')&&C('cmp-editor').style.display==='block') renderCompTable();
+}
+
+function toggleEvoEditor(){
+  const ed=C('evo-editor'),btn=C('evo-edit-btn');
+  const open=ed.style.display==='block';
+  ed.style.display=open?'none':'block';
+  btn.textContent=open?'✏ Editar datos':'✕ Cerrar';
+  if(!open) renderEvoTable();
+}
+
+// ══════════════════════════════════════════════
+// ESTADÍSTICAS POR PERÍODO (desde evoData)
+// ══════════════════════════════════════════════
+const RFMON=0.035/12;
+
+function mean(arr){ return arr.length?arr.reduce((a,b)=>a+b,0)/arr.length:0; }
+function stdDev(arr){ if(arr.length<2)return 0;const m=mean(arr);return Math.sqrt(arr.reduce((s,v)=>s+(v-m)**2,0)/arr.length)*Math.sqrt(arr.length/(arr.length-1)||1); }
+function maxDD(arr){ let peak=1,dd=0; arr.reduce((c,r)=>{const v=c*(1+r);if(v>peak)peak=v;const d=(peak-v)/peak;if(d>dd)dd=d;return v;},1);return dd; }
+function cagr(arr){ const total=arr.reduce((a,r)=>a*(1+r),1)-1;const n=arr.length/12;return n>0?Math.pow(1+total,1/n)-1:total; }
+
+function getPeriodReturns(data,yr){
+  if(!yr) return data.map(d=>d.r);
+  return data.filter(d=>{
+    const m=d.label.match(/\d{2,4}$/);if(!m)return false;
+    const y=m[0].length===4?m[0].slice(2):m[0];return y===yr;
+  }).map(d=>d.r);
+}
+
+function computeStats(rets){
+  if(!rets.length)return null;
+  const m2=mean(rets),s=stdDev(rets);
+  const volAnn=s*Math.sqrt(12)*100;
+  const sharpe=s>0?(m2-RFMON)/s*Math.sqrt(12):0;
+  // rentabilidad compuesta, igual que el TOTAL del mapa de calor
+  const totalRent=(rets.reduce((a,r)=>a*(1+r),1)-1)*100;
+  const best=Math.max(...rets)*100,worst=Math.min(...rets)*100;
+  const mdd2=maxDD(rets)*100;
+  const mPos=rets.filter(r=>r>0).length;
+  const cagrVal=cagr(rets)*100;
+  return{totalRent,meanMon:m2*100,volAnn,sharpe,best,worst,mdd:mdd2,mPos,total:rets.length,cagr:cagrVal};
+}
+
+// Serie mensual canónica: misma fuente y mismo filtrado que el mapa de calor
+// (un valor por mes, ordenados, ignorando etiquetas ilegibles)
+function getMonthlySeries(){
+  const evo=getEvoDataResolved();
+  const map={};
+  (evo||[]).forEach(d=>{
+    const p=parseEvoLabel(d.label);
+    if(!p) return;
+    const v=Number(d.var);
+    if(d.var===null||d.var===undefined||d.var===''||isNaN(v)) return;
+    map[`${p.year}-${String(p.monIdx+1).padStart(2,'0')}`]=v;
+  });
+  return Object.keys(map).sort().map(k=>({key:k,year:k.slice(0,4),r:map[k]/100}));
+}
+
+function renderStatsTable(){
+  const tbody=C('met-stats-tbody');if(!tbody)return;
+  const data=getMonthlySeries();
+  if(!data.length){tbody.innerHTML='<tr><td colspan="10" style="text-align:center;color:var(--muted);padding:24px;font-family:\'JetBrains Mono\';font-size:11px">Añade datos de evolución (pestaña Resumen → Editar datos) para ver las estadísticas</td></tr>';return;}
+  const years=[...new Set(data.map(d=>d.year))].sort();
+  const thisYear=String(new Date().getFullYear());
+  const periods=years.map(y=>({label:y===thisYear?y+' (YTD)':y,year:y}))
+    .concat([{label:'Total histórico',year:null,bold:true}]);
+  const rows=periods.map(p=>{
+    const rets=(p.year?data.filter(d=>d.year===p.year):data).map(d=>d.r);
+    const st=computeStats(rets);
+    const rowStyle=p.bold?'background:rgba(0,229,255,0.04);font-weight:700;border-top:2px solid var(--border);':'';
+    if(!st) return `<tr style="${rowStyle}"><td style="padding:10px 14px;font-family:'Syne';font-size:12px;font-weight:600;color:var(--accent)">${p.label}</td><td colspan="9" style="text-align:center;color:var(--muted);font-family:'JetBrains Mono';font-size:11px;padding:10px">Sin datos para este período</td></tr>`;
+    const td=(v,color)=>`<td style="padding:9px 10px;text-align:right;font-family:'JetBrains Mono';font-size:11px;color:${color||'var(--text)'};border-bottom:1px solid rgba(29,45,66,0.4);font-variant-numeric:tabular-nums">${v}</td>`;
+    const sharpeCol=st.sharpe>1?'var(--green)':st.sharpe>0?'var(--accent)':'var(--red)';
+    const winPct=(st.mPos/st.total*100).toFixed(0);
+    const winCol=+winPct>=60?'var(--green)':+winPct>=50?'var(--accent)':'var(--red)';
+    return `<tr style="${rowStyle}transition:background .15s" onmouseenter="this.style.background='rgba(0,229,255,0.04)'" onmouseleave="this.style.background='${p.bold?'rgba(0,229,255,0.04)':''}'">
+      <td style="padding:9px 14px;font-family:'Syne';font-size:12px;font-weight:700;color:var(--accent);border-bottom:1px solid rgba(29,45,66,0.4)">${p.label}</td>
+      ${td(fmtPct(st.totalRent),pctColor(st.totalRent))}
+      ${td(fmtPct(st.meanMon),pctColor(st.meanMon))}
+      ${td(st.volAnn.toFixed(2)+'%','var(--gold)')}
+      ${td(st.sharpe.toFixed(2),sharpeCol)}
+      ${td(fmtPct(st.best),'var(--green)')}
+      ${td(fmtPct(st.worst),'var(--red)')}
+      ${td(fmtPct(-st.mdd),'var(--red)')}
+      ${td(`${st.mPos}/${st.total} (${winPct}%)`,winCol)}
+      ${st.total>=12?td(fmtPct(st.cagr),'#69f0ae'):td('—','var(--muted)')}
+    </tr>`;
+  });
+  tbody.innerHTML=rows.join('');
+}
+
+// ══════════════════════════════════════════════
+// VENTAS SYSTEM (vacío por defecto)
+// ══════════════════════════════════════════════
+const VENTAS_KEY='ventas';
+let ventasCurrentYear=2025;
+let ventasSortState={col:'fechaVta',dir:-1};
+let editingVentaId=null;
+
+function ventasLoadData(){ return load(VENTAS_KEY,{2025:[],2026:[]}); }
+function ventasSaveData(data){ save(VENTAS_KEY,data); }
+
+function ventasSwitchYear(yr,btn){
+  ventasCurrentYear=yr;
+  document.querySelectorAll('.vnt-yr-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  ventasRender();
+}
+
+function ventasSort(col){
+  ventasSortState=ventasSortState.col===col?{col,dir:ventasSortState.dir*-1}:{col,dir:-1};
+  document.querySelectorAll('#vnt-table th').forEach(t=>t.classList.remove('vnt-sorted'));
+  event.currentTarget.classList.add('vnt-sorted');
+  ventasRender();
+}
+
+function ventasRender(){
+  const allData=ventasLoadData();
+  const q=(C('vnt-search')||{value:''}).value.trim().toLowerCase();
+  let rows=ventasCurrentYear===0?[...(allData[2025]||[]),...(allData[2026]||[])]:(allData[ventasCurrentYear]||[]);
+  if(q) rows=rows.filter(r=>(r.activo||'').toLowerCase().includes(q));
+  rows=[...rows].sort((a,b)=>{
+    const av=a[ventasSortState.col],bv=b[ventasSortState.col];
+    if(typeof av==='string') return ventasSortState.dir*(av||'').localeCompare(bv||'');
+    return ventasSortState.dir*((av||0)-(bv||0));
+  });
+  // KPIs
+  const totalProfit=rows.reduce((s,r)=>s+(r.profit||0),0);
+  const totalNet=rows.reduce((s,r)=>s+(r.profitNet||0),0);
+  const totalComis=rows.reduce((s,r)=>s+(r.comis||0),0);
+  const pos=rows.filter(r=>(r.profitNet||0)>0).length;
+  const neg=rows.filter(r=>(r.profitNet||0)<0).length;
+  C('vnt-kpi-grid').innerHTML=`
+    <div class="vnt-kpi"><div class="vnt-kpi-label">Profit Bruto</div><div class="vnt-kpi-value ${totalProfit>=0?'':''}" style="color:${totalProfit>=0?'var(--green)':'var(--red)'}">${EUR(totalProfit)}</div></div>
+    <div class="vnt-kpi"><div class="vnt-kpi-label">Profit Neto</div><div class="vnt-kpi-value" style="color:${totalNet>=0?'var(--green)':'var(--red)'}">${EUR(totalNet)}</div></div>
+    <div class="vnt-kpi"><div class="vnt-kpi-label">Comisiones</div><div class="vnt-kpi-value" style="color:var(--red)">${EUR(totalComis)}</div></div>
+    <div class="vnt-kpi"><div class="vnt-kpi-label">Operaciones</div><div class="vnt-kpi-value">${rows.length}</div><div class="vnt-kpi-sub">${pos} positivas · ${neg} negativas</div></div>
+  `;
+  C('vnt-tbody').innerHTML=rows.length?rows.map(r=>{
+    const pCl=(r.profitNet||0)>=0?'vnt-pos':'vnt-neg';
+    return `<tr>
+      <td><strong style="color:#63b3ed">${r.activo||'—'}</strong></td>
+      <td><span class="inline-date-badge">${r.fechaAdq||'—'}</span></td>
+      <td><span class="inline-date-badge">${r.fechaVta||'—'}</span></td>
+      <td class="r">${EUR(r.vAdq)}</td>
+      <td class="r">${EUR(r.vVta)}</td>
+      <td class="r" style="color:var(--red)">${EUR(r.comis)}</td>
+      <td class="r ${(r.profit||0)>=0?'vnt-pos':'vnt-neg'}">${EUR(r.profit)}</td>
+      <td class="r ${pCl}">${EUR(r.profitNet)}</td>
+      <td style="text-align:center;display:flex;gap:5px;justify-content:center;padding:8px">
+        <button class="btn-edit" onclick="ventasOpenModal('${r.id}')">✎</button>
+        <button class="btn-del" onclick="ventasDelete('${r.id}')">✕</button>
+      </td>
+    </tr>`;
+  }).join(''):'<tr><td colspan="9" class="empty-state">No hay ventas · Usa el botón ＋ para registrar</td></tr>';
+  C('vnt-info').textContent=rows.length?`${rows.length} operaciones mostradas`:'';
+}
+
+function ventasOpenModal(id){
+  editingVentaId=id;
+  const allData=ventasLoadData();
+  let venta=null;
+  if(id){
+    for(const yr of [2025,2026]){const f=(allData[yr]||[]).find(r=>r.id===id);if(f){venta=f;break;}}
+  }
+  C('vnt-modal-title').textContent=venta?'Editar Venta':'Nueva Venta';
+  C('vnt-f-activo').value=venta?.activo||'';
+  C('vnt-f-year').value=venta?.year||ventasCurrentYear||2025;
+  C('vnt-f-fadq').value=venta?.fechaAdq||'';
+  C('vnt-f-fvta').value=venta?.fechaVta||new Date().toISOString().substring(0,10);
+  C('vnt-f-vadq').value=venta?.vAdq||'';
+  C('vnt-f-vvta').value=venta?.vVta||'';
+  C('vnt-f-comis').value=venta?.comis||0;
+  ventasRecalc();
+  C('vnt-modal-overlay').classList.add('open');
+}
+
+function ventasCloseModal(){ C('vnt-modal-overlay').classList.remove('open');editingVentaId=null; }
+
+function ventasRecalc(){
+  const vadq=parseFloat(C('vnt-f-vadq').value)||0;
+  const vvta=parseFloat(C('vnt-f-vvta').value)||0;
+  const comis=parseFloat(C('vnt-f-comis').value)||0;
+  const net=vvta-vadq-comis;
+  const prev=C('vnt-f-preview');
+  prev.textContent=isNaN(net)?'—':(net>=0?'+':'')+net.toFixed(2)+' €';
+  prev.style.color=net>=0?'var(--green)':'var(--red)';
+}
+
+function ventasSaveModal(){
+  const activo=C('vnt-f-activo').value.trim();
+  const year=parseInt(C('vnt-f-year').value)||2025;
+  const fechaAdq=C('vnt-f-fadq').value;
+  const fechaVta=C('vnt-f-fvta').value;
+  const vAdq=parseFloat(C('vnt-f-vadq').value)||0;
+  const vVta=parseFloat(C('vnt-f-vvta').value)||0;
+  const comis=parseFloat(C('vnt-f-comis').value)||0;
+  if(!activo||!fechaVta){alert('Rellena al menos el activo y la fecha de venta');return;}
+  const profit=vVta-vAdq;
+  const profitNet=profit-comis;
+  const allData=ventasLoadData();
+  if(editingVentaId){
+    for(const yr of [2025,2026]){const idx=(allData[yr]||[]).findIndex(r=>r.id===editingVentaId);if(idx>=0){allData[yr][idx]={...allData[yr][idx],activo,year,fechaAdq,fechaVta,vAdq,vVta,comis,profit,profitNet};break;}}
+  } else {
+    if(!allData[year]) allData[year]=[];
+    allData[year].push({id:'v'+Date.now(),activo,year,fechaAdq,fechaVta,vAdq,vVta,comis,profit,profitNet});
+  }
+  ventasSaveData(allData);
+  ventasCloseModal();
+  ventasRender();
+}
+
+function ventasDelete(id){
+  if(!confirm('¿Eliminar esta venta?'))return;
+  const allData=ventasLoadData();
+  for(const yr of [2025,2026]){const idx=(allData[yr]||[]).findIndex(r=>r.id===id);if(idx>=0){allData[yr].splice(idx,1);break;}}
+  ventasSaveData(allData);
+  ventasRender();
+}
+
+
+// ══════════════════════════════════════════════
+// COMPARATIVA ANUAL — CARTERA MC vs MSCI ACWI
+// ══════════════════════════════════════════════
+const COMP_STORAGE='comp_data_v4';
+// MSCI ACWI acumulado (%) — precargado; Cartera MC a rellenar
+const COMP_DEFAULT=[
+  {label:'Sep-25',mc:0,bm:-0.92},
+  {label:'Oct-25',mc:6.76,bm:2.63},
+  {label:'Nov-25',mc:12.39,bm:6.63},
+  {label:'Dic-25',mc:16.82,bm:5.57},
+  {label:'Ene-26',mc:19.37,bm:7.82},
+  {label:'Feb-26',mc:24.99,bm:9.83},
+  {label:'Mar-26',mc:40.19,bm:2.1},
+  {label:'Abr-26',mc:25.46,bm:5.8},
+  {label:'May-26',mc:null,bm:11.92},
+  {label:'Jun-26',mc:null,bm:12.82},
+  {label:'Jul-26',mc:null,bm:11.95}
+];
+// Los meses de COMP_DEFAULT siempre están presentes con su MSCI ACWI;
+// lo guardado por el usuario se fusiona encima (mc y bm editados).
+function mergeCompData(stored){
+  const byLabel={};(stored||[]).forEach(d=>{ if(d&&d.label) byLabel[d.label]=d; });
+  const out=COMP_DEFAULT.map(d=>{
+    const s=byLabel[d.label];
+    const mc=s?(s.mc===''||s.mc===null||s.mc===undefined?null:Number(s.mc)):d.mc;
+    return {label:d.label, mc:mc, bm:(s&&Number(s.bm))?Number(s.bm):d.bm};
+  });
+  const known={};COMP_DEFAULT.forEach(d=>known[d.label]=1);
+  (stored||[]).forEach(d=>{ if(d&&d.label&&!known[d.label]) out.push({label:d.label,mc:(d.mc===''||d.mc===null||d.mc===undefined)?null:Number(d.mc),bm:Number(d.bm)||0}); });
+  return out;
+}
+let compData=mergeCompData(load(COMP_STORAGE,null));
+let _compChart=null;
+
+// Cartera MC = acumulado del gráfico de evolución (automático, no editable)
+function getEvoAcumMap(){
+  const evo=getEvoDataResolved();
+  const map={};
+  (evo||[]).forEach(d=>{
+    const p=parseEvoLabel(d.label);
+    if(!p) return;
+    const v=Number(d.acum);
+    if(d.acum===null||d.acum===undefined||d.acum===''||isNaN(v)) return;
+    map[`${p.year}-${String(p.monIdx+1).padStart(2,'0')}`]=v;
+  });
+  return map;
+}
+
+function syncCompMC(){
+  const map=getEvoAcumMap();
+  const seen={};
+  compData.forEach(d=>{
+    const p=parseEvoLabel(d.label);
+    const k=p?`${p.year}-${String(p.monIdx+1).padStart(2,'0')}`:null;
+    d.mc=(k&&map.hasOwnProperty(k))?map[k]:null;
+    if(k) seen[k]=1;
+  });
+  // meses que existen en evolución pero no en la tabla comparativa
+  Object.keys(map).forEach(k=>{
+    if(seen[k]) return;
+    const [y,m]=k.split('-');
+    compData.push({label:`${MONTH_NAMES[parseInt(m,10)-1]}-${y.slice(2)}`,mc:map[k],bm:null});
+  });
+  // orden cronológico; lo que no se pueda leer, al final
+  compData.sort((a,b)=>{
+    const pa=parseEvoLabel(a.label), pb=parseEvoLabel(b.label);
+    if(!pa&&!pb) return 0;
+    if(!pa) return 1;
+    if(!pb) return -1;
+    return `${pa.year}-${String(pa.monIdx+1).padStart(2,'0')}`.localeCompare(`${pb.year}-${String(pb.monIdx+1).padStart(2,'0')}`);
+  });
+}
+
+function buildCompChart(){
+  syncCompMC();
+  const ctx=C('comparativaChart');if(!ctx)return;
+  if(_compChart){_compChart.destroy();_compChart=null;}
+  const empty=C('cmp-empty');
+  if(!compData||!compData.length){ if(empty)empty.style.display='block'; ctx.style.display='none'; return; }
+  if(empty)empty.style.display='none';
+  ctx.style.display='block';
+  const labels=compData.map(d=>d.label);
+  const num=v=>(v===''||v===null||v===undefined||isNaN(Number(v)))?null:Number(v);
+  const mc=compData.map(d=>num(d.mc));
+  const bm=compData.map(d=>num(d.bm));
+  _compChart=new Chart(ctx,{
+    type:'line',
+    data:{labels,datasets:[
+      {label:'Cartera MC',data:mc,borderColor:'#00e5ff',backgroundColor:'rgba(0,229,255,0.10)',fill:true,tension:0.4,borderWidth:2.8,pointRadius:4,pointHoverRadius:7,pointBackgroundColor:'#00e5ff',pointBorderColor:'#080c12',pointBorderWidth:2,order:1},
+      {label:'MSCI ACWI',data:bm,borderColor:'#00e676',backgroundColor:'transparent',fill:false,tension:0.4,borderWidth:2.4,borderDash:[6,4],pointRadius:3.5,pointHoverRadius:7,pointBackgroundColor:'#00e676',pointBorderColor:'#080c12',pointBorderWidth:2,order:2},
+      {label:'0%',data:labels.map(()=>0),borderColor:'rgba(255,23,68,0.85)',borderWidth:2,borderDash:[6,5],pointRadius:0,pointHoverRadius:0,fill:false,order:0}
+    ]},
+    options:{
+      maintainAspectRatio:false,
+      interaction:{mode:'index',intersect:false},
+      plugins:{
+        legend:{labels:{color:'#5a7a99',font:{family:'Syne',size:11},usePointStyle:true,pointStyle:'circle',filter:i=>i.text!=='0%'}},
+        tooltip:{
+          filter:i=>i.dataset.label!=='0%',
+          callbacks:{label:c=>` ${c.dataset.label}: ${c.parsed.y>=0?'+':''}${c.parsed.y.toFixed(2)}%`}
+        }
+      },
+      scales:{
+        x:{grid:{color:'rgba(29,45,66,0.5)'},ticks:{color:'#5a7a99',font:{size:9}}},
+        y:{grid:{color:'rgba(29,45,66,0.5)'},ticks:{color:'#5a7a99',font:{size:10},callback:v=>(v>0?'+':'')+v+'%'}}
+      }
+    }
+  });
+}
+
+function lastVal(field){
+  for(let i=compData.length-1;i>=0;i--){
+    const v=compData[i][field];
+    if(v!==null&&v!==undefined&&v!==''&&!isNaN(Number(v))) return {v:Number(v),label:compData[i].label};
+  }
+  return null;
+}
+
+function refreshCompKPIs(){
+  syncCompMC();
+  const lmc=lastVal('mc'), lbm=lastVal('bm');
+  // para la diferencia usamos el último mes en el que hay dato de las dos series
+  let pair=null;
+  const ok=v=>v!==null&&v!==undefined&&v!==''&&!isNaN(Number(v));
+  for(let i=compData.length-1;i>=0;i--){
+    if(ok(compData[i].mc)&&ok(compData[i].bm)){pair={mc:Number(compData[i].mc),bm:Number(compData[i].bm),label:compData[i].label};break;}
+  }
+  const last=(lmc&&lbm)?{mc:lmc.v,bm:lbm.v,label:lbm.label,mcLabel:lmc.label}:null;
+  const fmt=v=>(v>=0?'+':'')+Number(v).toFixed(2)+'%';
+  const setTxt=(id,t)=>{const e=C(id);if(e)e.textContent=t;};
+  if(!last){
+    ['cmp-kpi-mc','cmp-kpi-bm','cmp-kpi-diff'].forEach(id=>setTxt(id,'—'));
+    setTxt('cmp-kpi-mc-sub','Sin datos');setTxt('cmp-kpi-bm-sub','Sin datos');
+    setTxt('cmp-kpi-diff-sub','Cartera MC vs benchmark');
+    const pill=C('cmp-strip-pill'), right=C('cmp-strip-right');
+    if(pill) pill.textContent='🌍 MSCI ACWI — sin datos';
+    if(right) right.textContent='Cartera MC: —';
+    return;
+  }
+  const mc=Number(last.mc)||0, bm=Number(last.bm)||0, diff=mc-bm;
+  setTxt('cmp-kpi-mc',fmt(mc)); setTxt('cmp-kpi-mc-sub',last.mcLabel);
+  setTxt('cmp-kpi-bm',fmt(bm)); setTxt('cmp-kpi-bm-sub',last.label);
+  const pmc=pair?pair.mc:mc, pbm=pair?pair.bm:bm, pdiff=pmc-pbm, plabel=pair?pair.label:last.mcLabel;
+  setTxt('cmp-kpi-diff',fmt(pdiff));
+  setTxt('cmp-kpi-diff-sub',(pdiff>=0?`Cartera MC ▲ ${Math.abs(pdiff).toFixed(2)}% por encima`:`Cartera MC ▼ ${Math.abs(pdiff).toFixed(2)}% por debajo`)+` · ${plabel}`);
+  const el=C('cmp-kpi-diff'); if(el) el.style.color=pdiff>=0?'#00e676':'#ff1744';
+  updateCompStrip(pmc,pbm,plabel);
+}
+
+function updateCompStrip(mc,bm,label){
+  const pill=C('cmp-strip-pill'), right=C('cmp-strip-right');
+  if(!pill||!right)return;
+  const diff=mc-bm, up=diff>=0;
+  const col=up?'#00e676':'#ff1744';
+  const rgb=up?'0,230,118':'255,23,68';
+  pill.style.borderColor=`rgba(${rgb},0.45)`;
+  pill.style.background=`rgba(${rgb},0.10)`;
+  pill.style.color=col;
+  pill.textContent=`🌍 Cartera MC ${up?'▲':'▼'} ${Math.abs(diff).toFixed(2)}% ${up?'por encima':'por debajo'} del MSCI ACWI`;
+  right.innerHTML=`Cartera MC: <span style="color:${mc>=0?'#00e5ff':'#ff1744'};font-weight:500">${(mc>=0?'+':'')+mc.toFixed(2)}%</span> · <span style="color:var(--muted)">${label}</span>`;
+}
+
+function renderCompTable(){
+  const body=C('cmp-table-body');if(!body)return;
+  syncCompMC();
+  body.innerHTML='';
+  if(!compData.length){
+    body.innerHTML=`<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:20px;font-family:'JetBrains Mono';font-size:11px">Sin periodos — pulsa «＋ Añadir periodo»</td></tr>`;
+    return;
+  }
+  compData.forEach((d,i)=>{
+    const tr=document.createElement('tr');
+    tr.style.cssText='border-bottom:1px solid rgba(29,45,66,0.5);transition:background .15s';
+    tr.onmouseenter=()=>tr.style.background='rgba(0,229,255,0.03)';
+    tr.onmouseleave=()=>tr.style.background='';
+    tr.innerHTML=`
+      <td style="padding:8px 14px">
+        <input type="text" value="${d.label}" style="width:92px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:'JetBrains Mono';font-size:11px;padding:5px 8px;outline:none" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'">
+      </td>
+      <td style="padding:8px 14px;text-align:right">
+        <span style="display:inline-block;width:96px;background:rgba(0,229,255,0.05);border:1px dashed rgba(0,229,255,0.28);border-radius:6px;color:var(--accent);font-family:'JetBrains Mono';font-size:11px;padding:5px 8px;text-align:right" title="Automático desde la evolución de la cartera">${d.mc===null||d.mc===undefined?'—':(d.mc>=0?'+':'')+Number(d.mc).toFixed(2)}</span>
+      </td>
+      <td style="padding:8px 14px;text-align:right">
+        <input type="number" step="0.01" value="${d.bm===null||d.bm===undefined?'':d.bm}" style="width:96px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;color:#00e676;font-family:'JetBrains Mono';font-size:11px;padding:5px 8px;text-align:right;outline:none" onfocus="this.style.borderColor='#00e676'" onblur="this.style.borderColor='var(--border)'">
+      </td>
+      <td style="padding:8px 14px;text-align:center">
+        <button onclick="removeCompRow(${i})" style="background:transparent;border:1px solid rgba(255,23,68,0.35);border-radius:5px;color:#ff1744;cursor:pointer;font-size:11px;width:26px;height:26px;display:inline-flex;align-items:center;justify-content:center">✕</button>
+      </td>`;
+    body.appendChild(tr);
+  });
+}
+
+function readCompInputs(){
+  const rows=C('cmp-table-body').querySelectorAll('tr');
+  const out=[];
+  rows.forEach(tr=>{
+    const inputs=tr.querySelectorAll('input');
+    if(inputs.length>=2) out.push({label:inputs[0].value||'Mes',mc:null,bm:inputs[1].value===''?null:(parseFloat(inputs[1].value)||0)});
+  });
+  if(out.length) compData=out;
+}
+
+function addCompRow(){
+  readCompInputs();
+  const lastLabel=compData.length?compData[compData.length-1].label:'';
+  compData.push({label:nextCompLabel(lastLabel),mc:null,bm:null});
+  renderCompTable();
+}
+
+function nextCompLabel(prev){
+  const p=parseEvoLabel(prev);
+  if(!p) return 'Mes';
+  const ni=(p.monIdx+1)%12;
+  const ny=p.monIdx===11?parseInt(p.year,10)+1:parseInt(p.year,10);
+  return `${MONTH_NAMES[ni]}-${String(ny).slice(2)}`;
+}
+
+function removeCompRow(i){
+  readCompInputs();
+  compData.splice(i,1);
+  renderCompTable();
+}
+
+function applyCompData(){
+  readCompInputs();
+  save(COMP_STORAGE,compData);
+  buildCompChart();
+  refreshCompKPIs();
+}
+
+function toggleCompEditor(){
+  const ed=C('cmp-editor'),btn=C('cmp-edit-btn');
+  const open=ed.style.display==='block';
+  ed.style.display=open?'none':'block';
+  btn.textContent=open?'✏ Editar datos':'✕ Cerrar';
+  if(!open) renderCompTable();
+}
+
+// ══════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════
+setActivosModo(activosModo);
+buildEvoDualChart(evoData.length>0?evoData:[]);
+renderHeatmap();
+refreshOverviewKPIs();
+initYearSelect();
+renderMovimientos();
+renderResumen();
+renderStatsTable();
+buildCompChart();
+refreshCompKPIs();
+
+// Keyboard ESC closes modals
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){
+    ['mov-modal','resumen-modal','confirm-modal','confirm-asset-modal','vnt-modal-overlay','backup-modal'].forEach(id=>{
+      const el=C(id);if(el)el.classList.remove('open');
+    });
+  }
+});
+
+// ── PWA: service worker, almacenamiento persistente e instalación ──
+(function(){
+  if('serviceWorker' in navigator && location.protocol.startsWith('http')){
+    window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+  }
+  try{ if(navigator.storage&&navigator.storage.persist) navigator.storage.persist(); }catch(e){}
+})();
+let deferredInstall=null;
+function pwaToast(t,ms){const d=document.createElement('div');d.className='pwa-toast';d.textContent=t;document.body.appendChild(d);setTimeout(()=>d.remove(),ms||5000);}
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredInstall=e;const b=C('install-btn');if(b)b.style.display='';});
+window.addEventListener('appinstalled',()=>{deferredInstall=null;const b=C('install-btn');if(b)b.style.display='none';pwaToast('✅ App instalada');});
+(function(){
+  const standalone=window.matchMedia('(display-mode: standalone)').matches||navigator.standalone;
+  const ios=/iphone|ipad|ipod/i.test(navigator.userAgent);
+  if(ios&&!standalone){const b=C('install-btn');if(b)b.style.display='';}
+})();
+function installApp(){
+  closeMenu();
+  if(deferredInstall){deferredInstall.prompt();deferredInstall.userChoice.finally(()=>{deferredInstall=null;});return;}
+  pwaToast('En iPhone/iPad: pulsa Compartir ⬆ y luego «Añadir a pantalla de inicio»',7000);
+}
+</script>
+</body>
+</html>
